@@ -66,7 +66,7 @@ Every DataWeave module published to Exchange needs a specific POM configuration.
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>{ORG_ID}</groupId>
+    <groupId>cb0ecddd-1505-4354-870f-45c4217384c2</groupId>
     <artifactId>dw-module-name</artifactId>
     <version>1.0.0</version>
     <packaging>mule-extension</packaging>
@@ -260,7 +260,7 @@ mvn clean deploy
 
 After deploy, your module appears at:
 ```
-https://anypoint.mulesoft.com/exchange/{ORG_ID}/dw-module-name/
+https://anypoint.mulesoft.com/exchange/cb0ecddd-1505-4354-870f-45c4217384c2/dw-module-name/
 ```
 
 ---
@@ -286,7 +286,7 @@ When the module is published, Exchange auto-generates a listing. To enhance it:
 
 ```xml
 <dependency>
-    <groupId>{ORG_ID}</groupId>
+    <groupId>cb0ecddd-1505-4354-870f-45c4217384c2</groupId>
     <artifactId>dw-string-utils</artifactId>
     <version>1.0.0</version>
     <classifier>mule-plugin</classifier>

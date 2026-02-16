@@ -5,8 +5,8 @@
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- REPLACE {ORG_ID} with your Anypoint Organization ID -->
-    <groupId>{ORG_ID}</groupId>
+    <!-- REPLACE cb0ecddd-1505-4354-870f-45c4217384c2 with your Anypoint Organization ID -->
+    <groupId>cb0ecddd-1505-4354-870f-45c4217384c2</groupId>
     <artifactId>dw-module-name</artifactId>
     <version>1.0.0</version>
     <packaging>mule-extension</packaging>

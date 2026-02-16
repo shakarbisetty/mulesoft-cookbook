@@ -5,49 +5,26 @@
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- REPLACE {ORG_ID} with your Anypoint Organization ID -->
-    <groupId>{ORG_ID}</groupId>
+    <groupId>cb0ecddd-1505-4354-870f-45c4217384c2</groupId>
     <artifactId>dw-xml-helpers</artifactId>
     <version>1.0.0</version>
-    <packaging>mule-extension</packaging>
+    <packaging>jar</packaging>
 
     <name>dw-xml-helpers</name>
-    <description>10 reusable XML utility functions for DataWeave 2.x — namespace handling, attribute extraction, CDATA, flattening, merging, XPath-like selection, and structure validation.</description>
-
-    <parent>
-        <groupId>org.mule.extensions</groupId>
-        <artifactId>mule-modules-parent</artifactId>
-        <version>1.3.2</version>
-    </parent>
+    <description>10 reusable XML utility functions for DataWeave 2.x</description>
 
     <properties>
-        <mule.version>4.4.0</mule.version>
-        <munit.version>2.3.16</munit.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.mule.tools.maven</groupId>
-                <artifactId>mule-maven-plugin</artifactId>
-                <version>3.8.3</version>
-                <extensions>true</extensions>
-            </plugin>
-            <plugin>
-                <groupId>com.mulesoft.munit.tools</groupId>
-                <artifactId>munit-maven-plugin</artifactId>
-                <version>${munit.version}</version>
-                <executions>
-                    <execution>
-                        <id>test</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
     </build>
 
     <distributionManagement>
@@ -58,20 +35,4 @@
             <layout>default</layout>
         </repository>
     </distributionManagement>
-
-    <repositories>
-        <repository>
-            <id>mulesoft-releases</id>
-            <name>MuleSoft Releases</name>
-            <url>https://repository.mulesoft.org/releases/</url>
-        </repository>
-    </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>mulesoft-releases</id>
-            <name>MuleSoft Releases</name>
-            <url>https://repository.mulesoft.org/releases/</url>
-        </pluginRepository>
-    </pluginRepositories>
 </project>

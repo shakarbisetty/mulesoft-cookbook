@@ -10,7 +10,7 @@ Add to your Mule project `pom.xml`:
 
 ```xml
 <dependency>
-    <groupId>{ORG_ID}</groupId>
+    <groupId>cb0ecddd-1505-4354-870f-45c4217384c2</groupId>
     <artifactId>dw-date-utils</artifactId>
     <version>1.0.0</version>
     <classifier>mule-plugin</classifier>
