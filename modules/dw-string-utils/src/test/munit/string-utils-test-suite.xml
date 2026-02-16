@@ -1,0 +1,705 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/munit-tools http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+        http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
+    <munit:config name="string-utils-test-suite"/>
+
+    <!-- ==================== camelize ==================== -->
+
+    <munit:test name="test-camelize-snake-case"
+                description="camelize converts snake_case to camelCase">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::camelize("hello_world")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('helloWorld')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-camelize-kebab-case"
+                description="camelize converts kebab-case to camelCase">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::camelize("foo-bar-baz")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('fooBarBaz')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-camelize-single-word"
+                description="camelize leaves single word as lowercase">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::camelize("hello")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('hello')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== snakeCase ==================== -->
+
+    <munit:test name="test-snakeCase-camelCase"
+                description="snakeCase converts camelCase to snake_case">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::snakeCase("helloWorld")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('hello_world')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-snakeCase-PascalCase"
+                description="snakeCase converts PascalCase to snake_case">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::snakeCase("MyClassName")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('my_class_name')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== titleCase ==================== -->
+
+    <munit:test name="test-titleCase-basic"
+                description="titleCase capitalizes first letter of each word">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::titleCase("hello world")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('Hello World')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-titleCase-mixed-case"
+                description="titleCase normalizes mixed case input">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::titleCase("the QUICK brown FOX")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('The Quick Brown Fox')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== truncate ==================== -->
+
+    <munit:test name="test-truncate-long-string"
+                description="truncate shortens string and adds ellipsis">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::truncate("Hello World", 8)
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('Hello...')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-truncate-short-string"
+                description="truncate returns short string unchanged">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::truncate("Hi", 10)
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('Hi')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== padLeft ==================== -->
+
+    <munit:test name="test-padLeft-basic"
+                description="padLeft pads string on the left">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::padLeft("42", 5, "0")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('00042')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-padLeft-no-padding-needed"
+                description="padLeft returns string unchanged if already long enough">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::padLeft("hello", 3, " ")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('hello')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== padRight ==================== -->
+
+    <munit:test name="test-padRight-basic"
+                description="padRight pads string on the right">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::padRight("42", 5, "0")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('42000')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== slugify ==================== -->
+
+    <munit:test name="test-slugify-basic"
+                description="slugify converts string to URL-friendly slug">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::slugify("Hello World!")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('hello-world')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-slugify-extra-spaces"
+                description="slugify handles extra spaces and special chars">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::slugify("  Foo  &  Bar  ")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('foo-bar')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== mask ==================== -->
+
+    <munit:test name="test-mask-basic"
+                description="mask hides all but last N characters">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::mask("1234567890", 4)
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('******7890')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-mask-short-string"
+                description="mask returns short string unchanged">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::mask("AB", 4)
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('AB')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== isBlank ==================== -->
+
+    <munit:test name="test-isBlank-empty"
+                description="isBlank returns true for empty string">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::isBlank("")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(true)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-isBlank-whitespace"
+                description="isBlank returns true for whitespace-only string">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::isBlank("   ")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(true)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-isBlank-non-blank"
+                description="isBlank returns false for non-blank string">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::isBlank("hi")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(false)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== isEmail ==================== -->
+
+    <munit:test name="test-isEmail-valid"
+                description="isEmail returns true for valid email">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::isEmail("user@example.com")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(true)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-isEmail-invalid"
+                description="isEmail returns false for invalid email">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::isEmail("not-an-email")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(false)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== isNumeric ==================== -->
+
+    <munit:test name="test-isNumeric-true"
+                description="isNumeric returns true for digit-only string">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::isNumeric("12345")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(true)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-isNumeric-decimal"
+                description="isNumeric returns false for decimal string">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::isNumeric("12.34")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(false)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== capitalize ==================== -->
+
+    <munit:test name="test-capitalize-basic"
+                description="capitalize uppercases first character">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::capitalize("hello")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('Hello')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-capitalize-empty"
+                description="capitalize handles empty string">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::capitalize("")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== removeWhitespace ==================== -->
+
+    <munit:test name="test-removeWhitespace-basic"
+                description="removeWhitespace strips all whitespace">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::removeWhitespace("  a  b  c  ")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('abc')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== reverse ==================== -->
+
+    <munit:test name="test-reverse-basic"
+                description="reverse reverses a string">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::reverse("hello")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('olleh')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-reverse-palindrome"
+                description="reverse of a palindrome returns the same string">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::reverse("racecar")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('racecar')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== countOccurrences ==================== -->
+
+    <munit:test name="test-countOccurrences-basic"
+                description="countOccurrences counts substring matches">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::countOccurrences("banana", "an")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(2)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-countOccurrences-no-match"
+                description="countOccurrences returns 0 when no match">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::countOccurrences("hello", "xyz")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(0)]"/>
+        </munit:validation>
+    </munit:test>
+
+</mule>

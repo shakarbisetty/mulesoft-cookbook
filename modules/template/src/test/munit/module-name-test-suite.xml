@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/munit-tools http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+        http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
+    <munit:config name="module-name-test-suite"/>
+
+    <!-- Template test — copy and adapt for each function -->
+
+    <munit:test name="test-function-name-basic"
+                description="Test functionName with basic input">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ModuleName
+                        output application/json
+                        ---
+                        ModuleName::functionName("input")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('expected')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-function-name-edge-case"
+                description="Test functionName with edge case (empty/null)">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ModuleName
+                        output application/json
+                        ---
+                        ModuleName::functionName("")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('')]"/>
+        </munit:validation>
+    </munit:test>
+
+</mule>

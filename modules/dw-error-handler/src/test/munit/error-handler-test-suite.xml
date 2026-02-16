@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/munit-tools http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+        http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
+    <munit:config name="error-handler-test-suite"/>
+
+    <!-- ==================== buildErrorResponse ==================== -->
+
+    <munit:test name="test-buildErrorResponse-400"
+                description="buildErrorResponse creates standard error JSON">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ErrorHandler
+                        output application/json
+                        ---
+                        ErrorHandler::buildErrorResponse(400, "Bad Request", "Field 'email' is required")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.error.code]"
+                is="#[MunitTools::equalTo(400)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.error.message]"
+                is="#[MunitTools::equalTo('Bad Request')]"/>
+            <munit-tools:assert-that
+                expression="#[payload.error.detail]"
+                is="#[MunitTools::equalTo('Field \'email\' is required')]"/>
+            <munit-tools:assert-that
+                expression="#[payload.error.timestamp]"
+                is="#[MunitTools::notNullValue()]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-buildErrorResponse-500"
+                description="buildErrorResponse works for server errors">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ErrorHandler
+                        output application/json
+                        ---
+                        ErrorHandler::buildErrorResponse(500, "Internal Server Error", "Database connection failed")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.error.code]"
+                is="#[MunitTools::equalTo(500)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.error.message]"
+                is="#[MunitTools::equalTo('Internal Server Error')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== classifyError ==================== -->
+
+    <munit:test name="test-classifyError-validation"
+                description="classifyError identifies validation errors">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ErrorHandler
+                        output application/json
+                        ---
+                        ErrorHandler::classifyError({errorType: {identifier: "HTTP:BAD_REQUEST"}})
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('VALIDATION')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-classifyError-auth"
+                description="classifyError identifies authentication errors">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ErrorHandler
+                        output application/json
+                        ---
+                        ErrorHandler::classifyError({errorType: {identifier: "HTTP:UNAUTHORIZED"}})
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('AUTHENTICATION')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-classifyError-not-found"
+                description="classifyError identifies not found errors">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ErrorHandler
+                        output application/json
+                        ---
+                        ErrorHandler::classifyError({errorType: {identifier: "HTTP:NOT_FOUND"}})
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('NOT_FOUND')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-classifyError-timeout"
+                description="classifyError identifies timeout errors">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ErrorHandler
+                        output application/json
+                        ---
+                        ErrorHandler::classifyError({errorType: {identifier: "HTTP:TIMEOUT"}})
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('TIMEOUT')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-classifyError-unknown"
+                description="classifyError defaults to SYSTEM for unknown errors">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ErrorHandler
+                        output application/json
+                        ---
+                        ErrorHandler::classifyError({errorType: {identifier: "MULE:SOMETHING_WEIRD"}})
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('SYSTEM')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== isRetryable ==================== -->
+
+    <munit:test name="test-isRetryable-timeout"
+                description="isRetryable returns true for timeout errors">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ErrorHandler
+                        output application/json
+                        ---
+                        ErrorHandler::isRetryable({errorType: {identifier: "HTTP:TIMEOUT"}})
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(true)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-isRetryable-connectivity"
+                description="isRetryable returns true for connectivity errors">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ErrorHandler
+                        output application/json
+                        ---
+                        ErrorHandler::isRetryable({errorType: {identifier: "HTTP:CONNECTIVITY"}})
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(true)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-isRetryable-503-status"
+                description="isRetryable returns true for 503 status code">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ErrorHandler
+                        output application/json
+                        ---
+                        ErrorHandler::isRetryable({errorType: {identifier: "HTTP:SERVICE_UNAVAILABLE"}, statusCode: 503})
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(true)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-isRetryable-false"
+                description="isRetryable returns false for non-transient errors">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ErrorHandler
+                        output application/json
+                        ---
+                        ErrorHandler::isRetryable({errorType: {identifier: "HTTP:UNAUTHORIZED"}})
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(false)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== errorToLog ==================== -->
+
+    <munit:test name="test-errorToLog-basic"
+                description="errorToLog produces formatted log string">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ErrorHandler
+                        output application/json
+                        ---
+                        ErrorHandler::errorToLog({errorType: {identifier: "HTTP:NOT_FOUND"}, description: "Resource missing"})
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('ERROR [HTTP:NOT_FOUND] Resource missing')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-errorToLog-missing-fields"
+                description="errorToLog handles missing errorType gracefully">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ErrorHandler
+                        output application/json
+                        ---
+                        ErrorHandler::errorToLog({message: "Something broke"})
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('ERROR [UNKNOWN] Something broke')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== sanitizeError ==================== -->
+
+    <munit:test name="test-sanitizeError-strips-sensitive"
+                description="sanitizeError removes stackTrace, exception, cause">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ErrorHandler
+                        output application/json
+                        ---
+                        ErrorHandler::sanitizeError({
+                            message: "Not found",
+                            code: 404,
+                            stackTrace: "at com.mule.internal...",
+                            exception: {class: "java.lang.RuntimeException"},
+                            cause: {message: "root cause"}
+                        })
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.message]"
+                is="#[MunitTools::equalTo('Not found')]"/>
+            <munit-tools:assert-that
+                expression="#[payload.code]"
+                is="#[MunitTools::equalTo(404)]"/>
+            <munit-tools:assert-that
+                expression="#[sizeOf(payload)]"
+                is="#[MunitTools::equalTo(2)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== wrapWithCorrelation ==================== -->
+
+    <munit:test name="test-wrapWithCorrelation-basic"
+                description="wrapWithCorrelation adds correlationId to error">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ErrorHandler
+                        output application/json
+                        ---
+                        ErrorHandler::wrapWithCorrelation({error: {code: 500, message: "Server error"}}, "req-abc-123")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.correlationId]"
+                is="#[MunitTools::equalTo('req-abc-123')]"/>
+            <munit-tools:assert-that
+                expression="#[payload.error.code]"
+                is="#[MunitTools::equalTo(500)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== httpStatusFromError ==================== -->
+
+    <munit:test name="test-httpStatusFromError-all-types"
+                description="httpStatusFromError maps all error types correctly">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ErrorHandler
+                        output application/json
+                        ---
+                        {
+                            validation: ErrorHandler::httpStatusFromError("VALIDATION"),
+                            auth: ErrorHandler::httpStatusFromError("AUTHENTICATION"),
+                            forbidden: ErrorHandler::httpStatusFromError("AUTHORIZATION"),
+                            notFound: ErrorHandler::httpStatusFromError("NOT_FOUND"),
+                            timeout: ErrorHandler::httpStatusFromError("TIMEOUT"),
+                            connectivity: ErrorHandler::httpStatusFromError("CONNECTIVITY"),
+                            unknown: ErrorHandler::httpStatusFromError("SOMETHING_ELSE")
+                        }
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.validation]"
+                is="#[MunitTools::equalTo(400)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.auth]"
+                is="#[MunitTools::equalTo(401)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.forbidden]"
+                is="#[MunitTools::equalTo(403)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.notFound]"
+                is="#[MunitTools::equalTo(404)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.timeout]"
+                is="#[MunitTools::equalTo(408)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.connectivity]"
+                is="#[MunitTools::equalTo(503)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.unknown]"
+                is="#[MunitTools::equalTo(500)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== buildFaultResponse ==================== -->
+
+    <munit:test name="test-buildFaultResponse-server"
+                description="buildFaultResponse creates SOAP fault structure">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ErrorHandler
+                        output application/json
+                        ---
+                        ErrorHandler::buildFaultResponse("Server", "Internal processing error")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.Fault.faultcode]"
+                is="#[MunitTools::equalTo('Server')]"/>
+            <munit-tools:assert-that
+                expression="#[payload.Fault.faultstring]"
+                is="#[MunitTools::equalTo('Internal processing error')]"/>
+            <munit-tools:assert-that
+                expression="#[payload.Fault.detail.timestamp]"
+                is="#[MunitTools::notNullValue()]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-buildFaultResponse-client"
+                description="buildFaultResponse works for client faults">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ErrorHandler
+                        output application/json
+                        ---
+                        ErrorHandler::buildFaultResponse("Client", "Invalid request format")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.Fault.faultcode]"
+                is="#[MunitTools::equalTo('Client')]"/>
+            <munit-tools:assert-that
+                expression="#[payload.Fault.faultstring]"
+                is="#[MunitTools::equalTo('Invalid request format')]"/>
+        </munit:validation>
+    </munit:test>
+
+</mule>

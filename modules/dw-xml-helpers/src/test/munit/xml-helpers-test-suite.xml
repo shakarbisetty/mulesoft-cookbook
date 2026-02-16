@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/munit-tools http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+        http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
+    <munit:config name="xml-helpers-test-suite"/>
+
+    <!-- ==================== nsAware ==================== -->
+
+    <munit:test name="test-nsAware-basic"
+                description="nsAware prefixes keys with namespace">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::XmlHelpers
+                        output application/json
+                        ---
+                        XmlHelpers::nsAware({name: "Alice", age: 30}, "http://example.com/ns", "ex")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.'ex:name']"
+                is="#[MunitTools::equalTo('Alice')]"/>
+            <munit-tools:assert-that
+                expression="#[payload.'ex:age']"
+                is="#[MunitTools::equalTo(30)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== stripNamespaces ==================== -->
+
+    <munit:test name="test-stripNamespaces-basic"
+                description="stripNamespaces removes namespace prefixes from keys">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::XmlHelpers
+                        output application/json
+                        ---
+                        XmlHelpers::stripNamespaces({"ns0:root": {"ns0:child": "value"}})
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.root.child]"
+                is="#[MunitTools::equalTo('value')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-stripNamespaces-mixed"
+                description="stripNamespaces handles mixed prefixed and non-prefixed keys">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::XmlHelpers
+                        output application/json
+                        ---
+                        XmlHelpers::stripNamespaces({"soap:Body": {"ns1:GetPrice": "100"}, "plain": "text"})
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.Body.GetPrice]"
+                is="#[MunitTools::equalTo('100')]"/>
+            <munit-tools:assert-that
+                expression="#[payload.plain]"
+                is="#[MunitTools::equalTo('text')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== extractAttributes ==================== -->
+
+    <munit:test name="test-extractAttributes-basic"
+                description="extractAttributes gets @ attributes from named element">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::XmlHelpers
+                        output application/json
+                        ---
+                        XmlHelpers::extractAttributes(
+                            {product @(id: "SKU-100", category: "electronics"): "Widget"},
+                            "product"
+                        )
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.id]"
+                is="#[MunitTools::equalTo('SKU-100')]"/>
+            <munit-tools:assert-that
+                expression="#[payload.category]"
+                is="#[MunitTools::equalTo('electronics')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== cdataWrap / cdataUnwrap ==================== -->
+
+    <munit:test name="test-cdataWrap-and-unwrap"
+                description="cdataWrap wraps string, cdataUnwrap extracts it">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::XmlHelpers
+                        output application/json
+                        ---
+                        {
+                            wrapped: XmlHelpers::cdataWrap("<script>alert('hi')</script>"),
+                            unwrapped: XmlHelpers::cdataUnwrap("<script>alert('hi')</script>")
+                        }
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.wrapped]"
+                is="#[MunitTools::containsString('script')]"/>
+            <munit-tools:assert-that
+                expression="#[payload.unwrapped]"
+                is="#[MunitTools::containsString('script')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== xmlToFlat ==================== -->
+
+    <munit:test name="test-xmlToFlat-nested"
+                description="xmlToFlat flattens nested object to dot-notation">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::XmlHelpers
+                        output application/json
+                        ---
+                        XmlHelpers::xmlToFlat({order: {header: {id: "123"}, items: {item: "Widget"}}}, ".")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.'order.header.id']"
+                is="#[MunitTools::equalTo('123')]"/>
+            <munit-tools:assert-that
+                expression="#[payload.'order.items.item']"
+                is="#[MunitTools::equalTo('Widget')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-xmlToFlat-custom-separator"
+                description="xmlToFlat uses custom separator">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::XmlHelpers
+                        output application/json
+                        ---
+                        XmlHelpers::xmlToFlat({user: {name: "Alice"}}, "/")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.'user/name']"
+                is="#[MunitTools::equalTo('Alice')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== flatToXml ==================== -->
+
+    <munit:test name="test-flatToXml-basic"
+                description="flatToXml converts dot-notation keys to nested object">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::XmlHelpers
+                        output application/json
+                        ---
+                        XmlHelpers::flatToXml({"order.id": "123", "order.date": "2026-02-15"}, ".")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.order.id]"
+                is="#[MunitTools::equalTo('123')]"/>
+            <munit-tools:assert-that
+                expression="#[payload.order.date]"
+                is="#[MunitTools::equalTo('2026-02-15')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== mergeXmlNodes ==================== -->
+
+    <munit:test name="test-mergeXmlNodes-nested"
+                description="mergeXmlNodes deep-merges two XML trees">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::XmlHelpers
+                        output application/json
+                        ---
+                        XmlHelpers::mergeXmlNodes(
+                            {root: {a: 1, b: {x: 10}}},
+                            {root: {b: {y: 20}, c: 3}}
+                        )
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.root.a]"
+                is="#[MunitTools::equalTo(1)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.root.b.x]"
+                is="#[MunitTools::equalTo(10)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.root.b.y]"
+                is="#[MunitTools::equalTo(20)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.root.c]"
+                is="#[MunitTools::equalTo(3)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-mergeXmlNodes-scalar-override"
+                description="mergeXmlNodes overrides scalar values from b">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::XmlHelpers
+                        output application/json
+                        ---
+                        XmlHelpers::mergeXmlNodes({a: 1, b: 2}, {b: 99, c: 3})
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.a]"
+                is="#[MunitTools::equalTo(1)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.b]"
+                is="#[MunitTools::equalTo(99)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.c]"
+                is="#[MunitTools::equalTo(3)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== xpathLike ==================== -->
+
+    <munit:test name="test-xpathLike-deep-path"
+                description="xpathLike selects deeply nested value by dot path">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::XmlHelpers
+                        output application/json
+                        ---
+                        XmlHelpers::xpathLike({root: {users: {user: "Alice"}}}, "root.users.user")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('Alice')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-xpathLike-array-result"
+                description="xpathLike returns array when path leads to array">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::XmlHelpers
+                        output application/json
+                        ---
+                        XmlHelpers::xpathLike(
+                            {root: {items: [{name: "A"}, {name: "B"}]}},
+                            "root.items"
+                        )
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[sizeOf(payload)]"
+                is="#[MunitTools::equalTo(2)]"/>
+            <munit-tools:assert-that
+                expression="#[payload[0].name]"
+                is="#[MunitTools::equalTo('A')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-xpathLike-missing-path"
+                description="xpathLike returns null for non-existent path">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::XmlHelpers
+                        output application/json
+                        ---
+                        XmlHelpers::xpathLike({root: {a: 1}}, "root.b.c") default "NOT_FOUND"
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('NOT_FOUND')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== validateStructure ==================== -->
+
+    <munit:test name="test-validateStructure-valid"
+                description="validateStructure returns valid when all keys present">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::XmlHelpers
+                        output application/json
+                        ---
+                        XmlHelpers::validateStructure(
+                            {name: "Alice", age: 30, email: "alice@example.com"},
+                            {name: "String", age: "Number", email: "String"}
+                        )
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.valid]"
+                is="#[MunitTools::equalTo(true)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.missing]"
+                is="#[MunitTools::equalTo([])]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-validateStructure-missing-keys"
+                description="validateStructure detects missing keys">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::XmlHelpers
+                        output application/json
+                        ---
+                        XmlHelpers::validateStructure(
+                            {name: "Alice", age: 30},
+                            {name: "String", age: "Number", email: "String"}
+                        )
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.valid]"
+                is="#[MunitTools::equalTo(false)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.missing]"
+                is="#[MunitTools::equalTo(['email'])]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-validateStructure-extra-keys"
+                description="validateStructure detects extra keys">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::XmlHelpers
+                        output application/json
+                        ---
+                        XmlHelpers::validateStructure(
+                            {name: "Alice", age: 30, phone: "555-1234"},
+                            {name: "String", age: "Number"}
+                        )
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.valid]"
+                is="#[MunitTools::equalTo(true)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.extra]"
+                is="#[MunitTools::equalTo(['phone'])]"/>
+        </munit:validation>
+    </munit:test>
+
+</mule>

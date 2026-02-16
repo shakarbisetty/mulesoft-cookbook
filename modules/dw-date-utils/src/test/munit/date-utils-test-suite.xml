@@ -1,0 +1,593 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/munit-tools http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+        http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
+    <munit:config name="date-utils-test-suite"/>
+
+    <!-- ==================== toISO ==================== -->
+
+    <munit:test name="test-toISO-utc"
+                description="toISO converts DateTime to ISO 8601 string">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::toISO(|2026-02-15T14:30:00Z|)
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::containsString('2026-02-15')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== toEpoch ==================== -->
+
+    <munit:test name="test-toEpoch-utc"
+                description="toEpoch converts DateTime to Unix seconds">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::toEpoch(|2026-02-15T00:00:00Z|)
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(1771200000)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== fromEpoch ==================== -->
+
+    <munit:test name="test-fromEpoch-basic"
+                description="fromEpoch converts epoch seconds to DateTime">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::fromEpoch(1771200000) as String {format: "yyyy-MM-dd"}
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('2026-02-15')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-fromEpoch-epoch-zero"
+                description="fromEpoch of 0 returns Unix epoch start">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::fromEpoch(0) as String {format: "yyyy-MM-dd"}
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('1970-01-01')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== addDays ==================== -->
+
+    <munit:test name="test-addDays-positive"
+                description="addDays adds days to a date">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::addDays(|2026-02-15|, 10) as String {format: "yyyy-MM-dd"}
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('2026-02-25')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-addDays-negative"
+                description="addDays subtracts days from a date">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::addDays(|2026-02-15|, -5) as String {format: "yyyy-MM-dd"}
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('2026-02-10')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-addDays-cross-month"
+                description="addDays crosses month boundary correctly">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::addDays(|2026-01-30|, 5) as String {format: "yyyy-MM-dd"}
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('2026-02-04')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== addMonths ==================== -->
+
+    <munit:test name="test-addMonths-basic"
+                description="addMonths adds months to a date">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::addMonths(|2026-03-15|, -2) as String {format: "yyyy-MM-dd"}
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('2026-01-15')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-addMonths-end-of-month-clamp"
+                description="addMonths clamps to end of shorter month">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::addMonths(|2026-01-31|, 1) as String {format: "yyyy-MM-dd"}
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('2026-02-28')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== diffDays ==================== -->
+
+    <munit:test name="test-diffDays-positive"
+                description="diffDays returns positive days when d2 is after d1">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::diffDays(|2026-02-10|, |2026-02-15|)
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(5)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-diffDays-negative"
+                description="diffDays returns negative when d2 is before d1">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::diffDays(|2026-02-15|, |2026-02-10|)
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(-5)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-diffDays-same-date"
+                description="diffDays returns 0 for same date">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::diffDays(|2026-02-15|, |2026-02-15|)
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(0)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== formatDate ==================== -->
+
+    <munit:test name="test-formatDate-us"
+                description="formatDate with US date format">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::formatDate(|2026-02-15T14:30:00Z|, "MM/dd/yyyy")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('02/15/2026')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-formatDate-european"
+                description="formatDate with European date format">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::formatDate(|2026-02-15T14:30:00Z|, "dd-MM-yyyy")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('15-02-2026')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== isWeekend ==================== -->
+
+    <munit:test name="test-isWeekend-saturday"
+                description="isWeekend returns true for Saturday">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::isWeekend(|2026-02-14|)
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(true)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-isWeekend-sunday"
+                description="isWeekend returns true for Sunday">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::isWeekend(|2026-02-15|)
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(true)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-isWeekend-weekday"
+                description="isWeekend returns false for Monday">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::isWeekend(|2026-02-16|)
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(false)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== startOfMonth ==================== -->
+
+    <munit:test name="test-startOfMonth-mid-month"
+                description="startOfMonth returns first day of month">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::startOfMonth(|2026-02-15|) as String {format: "yyyy-MM-dd"}
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('2026-02-01')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-startOfMonth-already-first"
+                description="startOfMonth returns same date if already first">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::startOfMonth(|2026-03-01|) as String {format: "yyyy-MM-dd"}
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('2026-03-01')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== endOfMonth ==================== -->
+
+    <munit:test name="test-endOfMonth-february"
+                description="endOfMonth returns Feb 28 for non-leap year">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::endOfMonth(|2026-02-15|) as String {format: "yyyy-MM-dd"}
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('2026-02-28')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-endOfMonth-leap-year"
+                description="endOfMonth returns Feb 29 for leap year">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::endOfMonth(|2024-02-15|) as String {format: "yyyy-MM-dd"}
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('2024-02-29')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-endOfMonth-31-day-month"
+                description="endOfMonth returns 31 for January">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::endOfMonth(|2026-01-10|) as String {format: "yyyy-MM-dd"}
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('2026-01-31')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== isLeapYear ==================== -->
+
+    <munit:test name="test-isLeapYear-true"
+                description="isLeapYear returns true for 2024">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::isLeapYear(2024)
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(true)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-isLeapYear-false"
+                description="isLeapYear returns false for 2026">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::isLeapYear(2026)
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(false)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-isLeapYear-century"
+                description="isLeapYear returns false for 1900, true for 2000">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        {
+                            y1900: DateUtils::isLeapYear(1900),
+                            y2000: DateUtils::isLeapYear(2000)
+                        }
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.y1900]"
+                is="#[MunitTools::equalTo(false)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.y2000]"
+                is="#[MunitTools::equalTo(true)]"/>
+        </munit:validation>
+    </munit:test>
+
+</mule>
