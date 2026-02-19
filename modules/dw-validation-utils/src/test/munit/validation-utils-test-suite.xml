@@ -1,0 +1,575 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/munit-tools http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+        http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
+    <munit:config name="validation-utils-test-suite"/>
+
+    <!-- ==================== isRequired ==================== -->
+
+    <munit:test name="test-isRequired-valid-string"
+                description="isRequired returns valid for non-empty string">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ValidationUtils
+                        output application/json
+                        ---
+                        ValidationUtils::isRequired("John", "name")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.valid]"
+                is="#[MunitTools::equalTo(true)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-isRequired-null"
+                description="isRequired returns invalid for null">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ValidationUtils
+                        output application/json
+                        ---
+                        ValidationUtils::isRequired(null, "email")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.valid]"
+                is="#[MunitTools::equalTo(false)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.field]"
+                is="#[MunitTools::equalTo('email')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-isRequired-empty-string"
+                description="isRequired returns invalid for empty string">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ValidationUtils
+                        output application/json
+                        ---
+                        ValidationUtils::isRequired("", "name")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.valid]"
+                is="#[MunitTools::equalTo(false)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== minLength ==================== -->
+
+    <munit:test name="test-minLength-valid"
+                description="minLength passes for string above minimum">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ValidationUtils
+                        output application/json
+                        ---
+                        ValidationUtils::minLength("hello", 3, "name")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.valid]"
+                is="#[MunitTools::equalTo(true)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-minLength-invalid"
+                description="minLength fails for string below minimum">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ValidationUtils
+                        output application/json
+                        ---
+                        ValidationUtils::minLength("ab", 3, "name")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.valid]"
+                is="#[MunitTools::equalTo(false)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== maxLength ==================== -->
+
+    <munit:test name="test-maxLength-valid"
+                description="maxLength passes for string within limit">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ValidationUtils
+                        output application/json
+                        ---
+                        ValidationUtils::maxLength("hello", 10, "name")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.valid]"
+                is="#[MunitTools::equalTo(true)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-maxLength-invalid"
+                description="maxLength fails for string exceeding limit">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ValidationUtils
+                        output application/json
+                        ---
+                        ValidationUtils::maxLength("this is a very long string", 10, "name")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.valid]"
+                is="#[MunitTools::equalTo(false)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== inRange ==================== -->
+
+    <munit:test name="test-inRange-valid"
+                description="inRange passes for number within range">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ValidationUtils
+                        output application/json
+                        ---
+                        ValidationUtils::inRange(25, 1, 100, "age")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.valid]"
+                is="#[MunitTools::equalTo(true)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-inRange-invalid"
+                description="inRange fails for number outside range">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ValidationUtils
+                        output application/json
+                        ---
+                        ValidationUtils::inRange(150, 1, 100, "age")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.valid]"
+                is="#[MunitTools::equalTo(false)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== matchesPattern ==================== -->
+
+    <munit:test name="test-matchesPattern-valid"
+                description="matchesPattern passes for matching regex">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ValidationUtils
+                        output application/json
+                        ---
+                        ValidationUtils::matchesPattern("ABC-123", "^[A-Z]{3}-\\d{3}$", "code")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.valid]"
+                is="#[MunitTools::equalTo(true)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-matchesPattern-invalid"
+                description="matchesPattern fails for non-matching regex">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ValidationUtils
+                        output application/json
+                        ---
+                        ValidationUtils::matchesPattern("abc123", "^[A-Z]{3}-\\d{3}$", "code")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.valid]"
+                is="#[MunitTools::equalTo(false)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== isOneOf ==================== -->
+
+    <munit:test name="test-isOneOf-valid"
+                description="isOneOf passes for value in allowed list">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ValidationUtils
+                        output application/json
+                        ---
+                        ValidationUtils::isOneOf("ACTIVE", ["ACTIVE", "INACTIVE", "PENDING"], "status")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.valid]"
+                is="#[MunitTools::equalTo(true)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-isOneOf-invalid"
+                description="isOneOf fails for value not in allowed list">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ValidationUtils
+                        output application/json
+                        ---
+                        ValidationUtils::isOneOf("DELETED", ["ACTIVE", "INACTIVE", "PENDING"], "status")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.valid]"
+                is="#[MunitTools::equalTo(false)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== isUUID ==================== -->
+
+    <munit:test name="test-isUUID-valid"
+                description="isUUID returns true for valid UUID">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ValidationUtils
+                        output application/json
+                        ---
+                        ValidationUtils::isUUID("550e8400-e29b-41d4-a716-446655440000")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(true)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-isUUID-invalid"
+                description="isUUID returns false for invalid UUID">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ValidationUtils
+                        output application/json
+                        ---
+                        ValidationUtils::isUUID("not-a-uuid")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(false)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== isURL ==================== -->
+
+    <munit:test name="test-isURL-valid"
+                description="isURL returns true for valid URL">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ValidationUtils
+                        output application/json
+                        ---
+                        ValidationUtils::isURL("https://example.com/api/v1")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(true)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-isURL-invalid"
+                description="isURL returns false for invalid URL">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ValidationUtils
+                        output application/json
+                        ---
+                        ValidationUtils::isURL("not a url")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(false)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== isPhone ==================== -->
+
+    <munit:test name="test-isPhone-valid"
+                description="isPhone returns true for E.164 phone number">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ValidationUtils
+                        output application/json
+                        ---
+                        ValidationUtils::isPhone("+14155551234")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(true)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-isPhone-invalid"
+                description="isPhone returns false for invalid phone">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ValidationUtils
+                        output application/json
+                        ---
+                        ValidationUtils::isPhone("555-CALL-ME")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(false)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== hasRequiredFields ==================== -->
+
+    <munit:test name="test-hasRequiredFields-all-present"
+                description="hasRequiredFields passes when all fields present">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ValidationUtils
+                        output application/json
+                        ---
+                        ValidationUtils::hasRequiredFields(
+                            { name: "John", email: "john@example.com", age: 30 },
+                            ["name", "email"]
+                        )
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.valid]"
+                is="#[MunitTools::equalTo(true)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-hasRequiredFields-missing"
+                description="hasRequiredFields fails when fields missing">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ValidationUtils
+                        output application/json
+                        ---
+                        ValidationUtils::hasRequiredFields(
+                            { name: "John" },
+                            ["name", "email", "phone"]
+                        )
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.valid]"
+                is="#[MunitTools::equalTo(false)]"/>
+            <munit-tools:assert-that
+                expression="#[sizeOf(payload.missing)]"
+                is="#[MunitTools::equalTo(2)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== validateAll ==================== -->
+
+    <munit:test name="test-validateAll-valid-payload"
+                description="validateAll passes for valid payload">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ValidationUtils
+                        output application/json
+                        ---
+                        ValidationUtils::validateAll(
+                            { name: "John Doe", age: 30, status: "ACTIVE" },
+                            {
+                                name: { required: true, minLength: 2, maxLength: 50 },
+                                age: { required: true, min: 1, max: 150 },
+                                status: { required: true, oneOf: ["ACTIVE", "INACTIVE"] }
+                            }
+                        )
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.valid]"
+                is="#[MunitTools::equalTo(true)]"/>
+            <munit-tools:assert-that
+                expression="#[sizeOf(payload.errors)]"
+                is="#[MunitTools::equalTo(0)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-validateAll-invalid-payload"
+                description="validateAll returns errors for invalid payload">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ValidationUtils
+                        output application/json
+                        ---
+                        ValidationUtils::validateAll(
+                            { name: "J", age: 200, status: "DELETED" },
+                            {
+                                name: { required: true, minLength: 2 },
+                                age: { min: 1, max: 150 },
+                                status: { oneOf: ["ACTIVE", "INACTIVE"] }
+                            }
+                        )
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.valid]"
+                is="#[MunitTools::equalTo(false)]"/>
+            <munit-tools:assert-that
+                expression="#[sizeOf(payload.errors)]"
+                is="#[MunitTools::greaterThan(0)]"/>
+        </munit:validation>
+    </munit:test>
+
+</mule>

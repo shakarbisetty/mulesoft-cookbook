@@ -702,4 +702,144 @@
         </munit:validation>
     </munit:test>
 
+    <!-- ==================== substringBefore ==================== -->
+
+    <munit:test name="test-substringBefore-found"
+                description="substringBefore returns text before separator">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::substringBefore("hello-world-foo", "-")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('hello')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-substringBefore-not-found"
+                description="substringBefore returns full string when separator absent">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::substringBefore("no-separator", "|")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('no-separator')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== substringAfter ==================== -->
+
+    <munit:test name="test-substringAfter-found"
+                description="substringAfter returns text after separator">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::substringAfter("hello-world-foo", "-")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('world-foo')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== wrap ==================== -->
+
+    <munit:test name="test-wrap"
+                description="wrap surrounds string with prefix and suffix">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::wrap("hello", "[", "]")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('[hello]')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== initials ==================== -->
+
+    <munit:test name="test-initials"
+                description="initials extracts uppercase first letters">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::initials("John Michael Doe")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('JMD')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-initials-lowercase"
+                description="initials works with lowercase input">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::initials("alice bob")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('AB')]"/>
+        </munit:validation>
+    </munit:test>
+
 </mule>

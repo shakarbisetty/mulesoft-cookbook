@@ -486,4 +486,123 @@
         </munit:validation>
     </munit:test>
 
+    <!-- ==================== toRFC7807 ==================== -->
+
+    <munit:test name="test-toRFC7807-basic"
+                description="toRFC7807 creates RFC 7807 response">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ErrorHandler
+                        output application/json
+                        ---
+                        ErrorHandler::toRFC7807(404, "Not Found", "Customer not found")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.status]"
+                is="#[MunitTools::equalTo(404)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.title]"
+                is="#[MunitTools::equalTo('Not Found')]"/>
+            <munit-tools:assert-that
+                expression="#[payload.'type']"
+                is="#[MunitTools::equalTo('about:blank')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-toRFC7807-with-instance"
+                description="toRFC7807 includes instance and custom type">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ErrorHandler
+                        output application/json
+                        ---
+                        ErrorHandler::toRFC7807(
+                            400, "Validation Error", "Email is required",
+                            "/api/users", "urn:error:validation"
+                        )
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.instance]"
+                is="#[MunitTools::equalTo('/api/users')]"/>
+            <munit-tools:assert-that
+                expression="#[payload.'type']"
+                is="#[MunitTools::equalTo('urn:error:validation')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== errorChain ==================== -->
+
+    <munit:test name="test-errorChain-single"
+                description="errorChain returns single error description">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ErrorHandler
+                        output application/json
+                        ---
+                        ErrorHandler::errorChain({ description: "Connection failed" })
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[sizeOf(payload)]"
+                is="#[MunitTools::equalTo(1)]"/>
+            <munit-tools:assert-that
+                expression="#[payload[0]]"
+                is="#[MunitTools::equalTo('Connection failed')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-errorChain-nested"
+                description="errorChain flattens nested cause chain">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ErrorHandler
+                        output application/json
+                        ---
+                        ErrorHandler::errorChain({
+                            description: "HTTP 500",
+                            cause: {
+                                description: "Connection refused",
+                                cause: { description: "Timeout" }
+                            }
+                        })
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[sizeOf(payload)]"
+                is="#[MunitTools::equalTo(3)]"/>
+            <munit-tools:assert-that
+                expression="#[payload[0]]"
+                is="#[MunitTools::equalTo('HTTP 500')]"/>
+            <munit-tools:assert-that
+                expression="#[payload[2]]"
+                is="#[MunitTools::equalTo('Timeout')]"/>
+        </munit:validation>
+    </munit:test>
+
 </mule>

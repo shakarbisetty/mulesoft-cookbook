@@ -11,9 +11,10 @@ import * from dw::core::Objects
  *
  * Import with: import modules::XmlHelpers
  *
- * Functions (10):
+ * Functions (12):
  *   nsAware, stripNamespaces, extractAttributes, cdataWrap, cdataUnwrap,
- *   xmlToFlat, flatToXml, mergeXmlNodes, xpathLike, validateStructure
+ *   xmlToFlat, flatToXml, mergeXmlNodes, xpathLike, validateStructure,
+ *   soapEnvelope, xmlToString
  */
 
 /**
@@ -186,3 +187,33 @@ fun validateStructure(xml: Object, schema: Object): Object =
             extra: extra
         }
     }
+
+/**
+ * Build a SOAP 1.1 envelope structure with optional header and body.
+ * Produces the nested object structure that DW will serialize as proper SOAP XML.
+ *
+ * soapEnvelope({GetCustomer: {id: "123"}}, {Security: {token: "abc"}})
+ *   -> { Envelope: { Header: { Security: { token: "abc" } }, Body: { GetCustomer: { id: "123" } } } }
+ */
+fun soapEnvelope(body: Object, header: Object = {}): Object =
+    {
+        Envelope: {
+            (Header: header) if !isEmpty(header),
+            Body: body
+        }
+    }
+
+/**
+ * Serialize an object to a compact XML-like string representation.
+ * Useful for logging or debugging XML structures without full XML serialization.
+ *
+ * xmlToString({root: {child: "value", attr: 42}})
+ *   -> "<root><child>value</child><attr>42</attr></root>"
+ */
+fun xmlToString(obj: Object): String =
+    obj pluck ((val, key) ->
+        if (val is Object)
+            "<$(key as String)>" ++ xmlToString(val as Object) ++ "</$(key as String)>"
+        else
+            "<$(key as String)>$(val as String)</$(key as String)>"
+    ) joinBy ""

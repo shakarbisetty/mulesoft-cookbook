@@ -586,4 +586,115 @@
         </munit:validation>
     </munit:test>
 
+    <!-- ==================== sliding ==================== -->
+
+    <munit:test name="test-sliding-window"
+                description="sliding creates overlapping windows">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::CollectionUtils
+                        output application/json
+                        ---
+                        CollectionUtils::sliding([1, 2, 3, 4, 5], 3)
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[sizeOf(payload)]"
+                is="#[MunitTools::equalTo(3)]"/>
+            <munit-tools:assert-that
+                expression="#[payload[0]]"
+                is="#[MunitTools::equalTo([1, 2, 3])]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== zip ==================== -->
+
+    <munit:test name="test-zip"
+                description="zip pairs elements from two arrays">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::CollectionUtils
+                        output application/json
+                        ---
+                        CollectionUtils::zip(["a", "b", "c"], [1, 2, 3])
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[sizeOf(payload)]"
+                is="#[MunitTools::equalTo(3)]"/>
+            <munit-tools:assert-that
+                expression="#[payload[0]]"
+                is="#[MunitTools::equalTo(['a', 1])]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== transpose ==================== -->
+
+    <munit:test name="test-transpose"
+                description="transpose converts rows to columns">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::CollectionUtils
+                        output application/json
+                        ---
+                        CollectionUtils::transpose([[1, 2, 3], [4, 5, 6]])
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[sizeOf(payload)]"
+                is="#[MunitTools::equalTo(3)]"/>
+            <munit-tools:assert-that
+                expression="#[payload[0]]"
+                is="#[MunitTools::equalTo([1, 4])]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== frequencies ==================== -->
+
+    <munit:test name="test-frequencies"
+                description="frequencies counts element occurrences">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::CollectionUtils
+                        output application/json
+                        ---
+                        CollectionUtils::frequencies(["a", "b", "a", "c", "b", "a"])
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.a]"
+                is="#[MunitTools::equalTo(3)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.b]"
+                is="#[MunitTools::equalTo(2)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.c]"
+                is="#[MunitTools::equalTo(1)]"/>
+        </munit:validation>
+    </munit:test>
+
 </mule>

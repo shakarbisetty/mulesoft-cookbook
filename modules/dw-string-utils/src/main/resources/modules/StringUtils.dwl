@@ -9,10 +9,11 @@ import * from dw::core::Arrays
  * Reusable string utility functions for DataWeave 2.x.
  * Import with: import modules::StringUtils
  *
- * Functions (15):
+ * Functions (19):
  *   camelize, snakeCase, titleCase, truncate, padLeft, padRight,
  *   slugify, mask, isBlank, isEmail, isNumeric, capitalize,
- *   removeWhitespace, reverse, countOccurrences
+ *   removeWhitespace, reverse, countOccurrences, substringBefore,
+ *   substringAfter, wrap, initials
  */
 
 /**
@@ -179,3 +180,47 @@ fun reverse(s: String): String =
 fun countOccurrences(s: String, sub: String): Number =
     if (sizeOf(sub) == 0) 0
     else sizeOf(s scan sub)
+
+/**
+ * Get the substring before the first occurrence of a separator.
+ * substringBefore("hello-world-foo", "-") -> "hello"
+ * substringBefore("no-separator", "|") -> "no-separator"
+ */
+fun substringBefore(s: String, sep: String): String =
+    do {
+        var parts = s splitBy sep
+        ---
+        if (sizeOf(parts) > 1) parts[0]
+        else s
+    }
+
+/**
+ * Get the substring after the first occurrence of a separator.
+ * substringAfter("hello-world-foo", "-") -> "world-foo"
+ * substringAfter("no-separator", "|") -> "no-separator"
+ */
+fun substringAfter(s: String, sep: String): String =
+    do {
+        var idx = s find sep
+        ---
+        if (isEmpty(idx)) s
+        else s[(idx[0] + sizeOf(sep)) to -1]
+    }
+
+/**
+ * Wrap a string with a prefix and suffix.
+ * wrap("hello", "[", "]") -> "[hello]"
+ * wrap("value", "'", "'") -> "'value'"
+ */
+fun wrap(s: String, prefix: String, suffix: String): String =
+    prefix ++ s ++ suffix
+
+/**
+ * Extract initials from a name string.
+ * initials("John Michael Doe") -> "JMD"
+ * initials("alice bob") -> "AB"
+ */
+fun initials(s: String): String =
+    (trim(s) splitBy /\s+/)
+        map upper($[0] default "")
+        joinBy ""

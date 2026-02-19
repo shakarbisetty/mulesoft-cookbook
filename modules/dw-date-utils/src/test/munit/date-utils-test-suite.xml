@@ -590,4 +590,142 @@
         </munit:validation>
     </munit:test>
 
+    <!-- ==================== toBusinessDay ==================== -->
+
+    <munit:test name="test-toBusinessDay-weekday"
+                description="toBusinessDay returns same date for weekday">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::toBusinessDay(|2026-02-13|) as String {format: "yyyy-MM-dd"}
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('2026-02-13')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-toBusinessDay-saturday"
+                description="toBusinessDay shifts Saturday to Monday">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::toBusinessDay(|2026-02-14|) as String {format: "yyyy-MM-dd"}
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('2026-02-16')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== quarter ==================== -->
+
+    <munit:test name="test-quarter-q1"
+                description="quarter returns 1 for January">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::quarter(|2026-01-15|)
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(1)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-quarter-q4"
+                description="quarter returns 4 for December">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::quarter(|2026-12-01|)
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(4)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== daysBetweenBusiness ==================== -->
+
+    <munit:test name="test-daysBetweenBusiness-weekdays-only"
+                description="daysBetweenBusiness counts only weekdays">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::daysBetweenBusiness(|2026-02-09|, |2026-02-13|)
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(4)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-daysBetweenBusiness-spans-weekend"
+                description="daysBetweenBusiness skips weekend days">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::daysBetweenBusiness(|2026-02-09|, |2026-02-16|)
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(5)]"/>
+        </munit:validation>
+    </munit:test>
+
 </mule>

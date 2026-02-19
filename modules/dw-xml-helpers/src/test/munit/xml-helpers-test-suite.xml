@@ -448,4 +448,111 @@
         </munit:validation>
     </munit:test>
 
+    <!-- ==================== soapEnvelope ==================== -->
+
+    <munit:test name="test-soapEnvelope-body-only"
+                description="soapEnvelope creates envelope with body">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::XmlHelpers
+                        output application/json
+                        ---
+                        XmlHelpers::soapEnvelope({ GetCustomer: { id: "123" } })
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.Envelope.Body.GetCustomer.id]"
+                is="#[MunitTools::equalTo('123')]"/>
+            <munit-tools:assert-that
+                expression="#[payload.Envelope.Header]"
+                is="#[MunitTools::nullValue()]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-soapEnvelope-with-header"
+                description="soapEnvelope includes header when provided">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::XmlHelpers
+                        output application/json
+                        ---
+                        XmlHelpers::soapEnvelope(
+                            { GetCustomer: { id: "123" } },
+                            { Security: { token: "abc" } }
+                        )
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.Envelope.Header.Security.token]"
+                is="#[MunitTools::equalTo('abc')]"/>
+            <munit-tools:assert-that
+                expression="#[payload.Envelope.Body.GetCustomer.id]"
+                is="#[MunitTools::equalTo('123')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== xmlToString ==================== -->
+
+    <munit:test name="test-xmlToString-simple"
+                description="xmlToString converts object to XML-like string">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::XmlHelpers
+                        output application/json
+                        ---
+                        XmlHelpers::xmlToString({ root: { child: "value" } })
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::containsString('<root>')]"/>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::containsString('<child>value</child>')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-xmlToString-flat"
+                description="xmlToString handles flat key-value pairs">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::XmlHelpers
+                        output application/json
+                        ---
+                        XmlHelpers::xmlToString({ name: "Alice", age: "30" })
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::containsString('<name>Alice</name>')]"/>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::containsString('<age>30</age>')]"/>
+        </munit:validation>
+    </munit:test>
+
 </mule>

@@ -9,10 +9,10 @@ import * from dw::core::Objects
  * Reusable array and object utility functions for DataWeave 2.x.
  * Import with: import modules::CollectionUtils
  *
- * Functions (15):
+ * Functions (19):
  *   chunk, compact, intersection, difference, union, pick, omit,
  *   deepMerge, pivot, unpivot, flattenKeys, unique, partition,
- *   indexBy, countBy
+ *   indexBy, countBy, sliding, zip, transpose, frequencies
  */
 
 /**
@@ -162,4 +162,52 @@ fun countBy(arr: Array, fn: (Any) -> Any): Object =
         var current = (acc[groupKey] default 0) as Number
         ---
         acc ++ {(groupKey): current + 1}
+    })
+
+/**
+ * Create sliding windows of a given size over an array.
+ * sliding([1,2,3,4,5], 3) -> [[1,2,3],[2,3,4],[3,4,5]]
+ * sliding([1,2], 3) -> [[1,2]]
+ */
+fun sliding(arr: Array, size: Number): Array =
+    if (sizeOf(arr) <= size) [arr]
+    else (0 to (sizeOf(arr) - size)) map ((i) ->
+        arr[i to (i + size - 1)]
+    )
+
+/**
+ * Zip two arrays together into an array of pairs.
+ * zip(["a","b","c"], [1,2,3]) -> [["a",1],["b",2],["c",3]]
+ * Truncates to the shorter array length.
+ */
+fun zip(a: Array, b: Array): Array =
+    do {
+        var len = min([sizeOf(a), sizeOf(b)])
+        ---
+        (0 to (len - 1)) map ((i) -> [a[i], b[i]])
+    }
+
+/**
+ * Transpose a 2D array (rows become columns).
+ * transpose([[1,2,3],[4,5,6]]) -> [[1,4],[2,5],[3,6]]
+ */
+fun transpose(matrix: Array<Array>): Array<Array> =
+    do {
+        var cols = sizeOf(matrix[0] default [])
+        ---
+        (0 to (cols - 1)) map ((c) ->
+            matrix map $[c]
+        )
+    }
+
+/**
+ * Count the frequency of each element in an array.
+ * frequencies(["a","b","a","c","b","a"]) -> {a: 3, b: 2, c: 1}
+ */
+fun frequencies(arr: Array): Object =
+    arr reduce ((item, acc = {}) -> do {
+        var key = item as String
+        var current = (acc[key] default 0) as Number
+        ---
+        acc ++ {(key): current + 1}
     })

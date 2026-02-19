@@ -10,9 +10,10 @@
  *
  * Import with: import modules::ErrorHandler
  *
- * Functions (8):
+ * Functions (10):
  *   buildErrorResponse, classifyError, isRetryable, errorToLog,
- *   sanitizeError, wrapWithCorrelation, httpStatusFromError, buildFaultResponse
+ *   sanitizeError, wrapWithCorrelation, httpStatusFromError, buildFaultResponse,
+ *   toRFC7807, errorChain
  */
 
 /**
@@ -158,4 +159,36 @@ fun buildFaultResponse(code: String, msg: String): Object =
                 timestamp: now() as String {format: "yyyy-MM-dd'T'HH:mm:ss'Z'"}
             }
         }
+    }
+
+/**
+ * Build a full RFC 7807 Problem Details response with optional extensions.
+ * toRFC7807(404, "Not Found", "Customer CUST-001 not found", "/api/customers/CUST-001", "urn:error:customer-not-found")
+ */
+fun toRFC7807(status: Number, title: String, detail: String, instance: String = "", typeUri: String = "about:blank"): Object =
+    {
+        "type": typeUri,
+        title: title,
+        status: status,
+        detail: detail,
+        (instance: instance) if !isEmpty(instance),
+        timestamp: now() as String {format: "yyyy-MM-dd'T'HH:mm:ss'Z'"}
+    }
+
+/**
+ * Build a causal error chain from a Mule error with nested causes.
+ * Traverses error.cause recursively to produce a flat array of error descriptions.
+ *
+ * errorChain({description: "HTTP 500", cause: {description: "Connection refused", cause: {description: "Timeout"}}})
+ *   -> ["HTTP 500", "Connection refused", "Timeout"]
+ */
+fun errorChain(error: Object): Array<String> =
+    do {
+        var desc = error.description default error.message default "Unknown error"
+        var hasCause = error.cause != null and error.cause is Object
+        ---
+        if (hasCause)
+            [desc] ++ errorChain(error.cause as Object)
+        else
+            [desc]
     }

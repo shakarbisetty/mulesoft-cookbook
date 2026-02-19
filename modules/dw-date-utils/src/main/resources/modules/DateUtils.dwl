@@ -7,9 +7,10 @@
  * Reusable date/time utility functions for DataWeave 2.x.
  * Import with: import modules::DateUtils
  *
- * Functions (11):
+ * Functions (14):
  *   toISO, toEpoch, fromEpoch, addDays, addMonths, diffDays,
- *   formatDate, isWeekend, startOfMonth, endOfMonth, isLeapYear
+ *   formatDate, isWeekend, startOfMonth, endOfMonth, isLeapYear,
+ *   toBusinessDay, quarter, daysBetweenBusiness
  */
 
 /**
@@ -107,3 +108,56 @@ fun endOfMonth(d: Date): Date =
  */
 fun isLeapYear(y: Number): Boolean =
     (mod(y, 4) == 0 and mod(y, 100) != 0) or (mod(y, 400) == 0)
+
+/**
+ * Adjust a date to the next business day (Mon-Fri).
+ * If the date falls on Saturday, returns the following Monday.
+ * If on Sunday, returns the following Monday.
+ * toBusinessDay(|2026-02-14|) -> |2026-02-16| (Saturday -> Monday)
+ * toBusinessDay(|2026-02-13|) -> |2026-02-13| (Friday -> Friday)
+ */
+fun toBusinessDay(d: Date): Date =
+    do {
+        var dow = (d as DateTime) as String {format: "u"}
+        ---
+        if (dow == "6") addDays(d, 2)
+        else if (dow == "7") addDays(d, 1)
+        else d
+    }
+
+/**
+ * Get the fiscal quarter (1-4) for a given date.
+ * quarter(|2026-01-15|) -> 1
+ * quarter(|2026-06-15|) -> 2
+ * quarter(|2026-09-30|) -> 3
+ * quarter(|2026-12-01|) -> 4
+ */
+fun quarter(d: Date): Number =
+    do {
+        var month = d.month as Number
+        ---
+        ceil(month / 3)
+    }
+
+/**
+ * Count business days (Mon-Fri) between two dates (exclusive of end date).
+ * daysBetweenBusiness(|2026-02-09|, |2026-02-13|) -> 4  (Mon-Thu)
+ * daysBetweenBusiness(|2026-02-09|, |2026-02-16|) -> 5  (Mon-Fri, skip Sat/Sun)
+ */
+fun daysBetweenBusiness(d1: Date, d2: Date): Number =
+    do {
+        var totalDays = diffDays(d1, d2)
+        var fullWeeks = floor(totalDays / 7)
+        var remainingDays = mod(totalDays, 7)
+        var startDow = ((d1 as DateTime) as String {format: "u"}) as Number
+        var extraWeekendDays = (0 to (remainingDays - 1)) reduce ((i, acc = 0) ->
+            do {
+                var currentDow = mod(startDow + i - 1, 7) + 1
+                ---
+                if (currentDow == 6 or currentDow == 7) acc + 1
+                else acc
+            }
+        )
+        ---
+        totalDays - (fullWeeks * 2) - (extraWeekendDays default 0)
+    }

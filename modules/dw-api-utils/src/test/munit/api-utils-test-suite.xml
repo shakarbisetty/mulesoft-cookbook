@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/munit-tools http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+        http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
+    <munit:config name="api-utils-test-suite"/>
+
+    <!-- ==================== paginate ==================== -->
+
+    <munit:test name="test-paginate-first-page"
+                description="paginate returns correct first page with metadata">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ApiUtils
+                        output application/json
+                        ---
+                        ApiUtils::paginate([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 1, 3)
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[sizeOf(payload.data)]"
+                is="#[MunitTools::equalTo(3)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.meta.page]"
+                is="#[MunitTools::equalTo(1)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.meta.totalRecords]"
+                is="#[MunitTools::equalTo(10)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.meta.totalPages]"
+                is="#[MunitTools::equalTo(4)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.meta.hasNext]"
+                is="#[MunitTools::equalTo(true)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.meta.hasPrevious]"
+                is="#[MunitTools::equalTo(false)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-paginate-last-page"
+                description="paginate returns correct last page">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ApiUtils
+                        output application/json
+                        ---
+                        ApiUtils::paginate([1, 2, 3, 4, 5], 2, 3)
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[sizeOf(payload.data)]"
+                is="#[MunitTools::equalTo(2)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.meta.hasNext]"
+                is="#[MunitTools::equalTo(false)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.meta.hasPrevious]"
+                is="#[MunitTools::equalTo(true)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-paginate-beyond-range"
+                description="paginate returns empty data for page beyond range">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ApiUtils
+                        output application/json
+                        ---
+                        ApiUtils::paginate([1, 2, 3], 5, 10)
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[sizeOf(payload.data)]"
+                is="#[MunitTools::equalTo(0)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== buildLinks ==================== -->
+
+    <munit:test name="test-buildLinks-middle-page"
+                description="buildLinks includes next and previous for middle page">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ApiUtils
+                        output application/json
+                        ---
+                        ApiUtils::buildLinks("/api/customers", 2, 5, 10)
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.self]"
+                is="#[MunitTools::equalTo('/api/customers?page=2&size=10')]"/>
+            <munit-tools:assert-that
+                expression="#[payload.next]"
+                is="#[MunitTools::equalTo('/api/customers?page=3&size=10')]"/>
+            <munit-tools:assert-that
+                expression="#[payload.previous]"
+                is="#[MunitTools::equalTo('/api/customers?page=1&size=10')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-buildLinks-first-page"
+                description="buildLinks omits previous on first page">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ApiUtils
+                        output application/json
+                        ---
+                        ApiUtils::buildLinks("/api/items", 1, 3, 10)
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.next]"
+                is="#[MunitTools::notNullValue()]"/>
+            <munit-tools:assert-that
+                expression="#[payload.previous]"
+                is="#[MunitTools::nullValue()]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== filterFields ==================== -->
+
+    <munit:test name="test-filterFields-select-fields"
+                description="filterFields returns only requested fields">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ApiUtils
+                        output application/json
+                        ---
+                        ApiUtils::filterFields(
+                            { name: "John", email: "john@test.com", age: 30, phone: "555-1234" },
+                            ["name", "email"]
+                        )
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.name]"
+                is="#[MunitTools::equalTo('John')]"/>
+            <munit-tools:assert-that
+                expression="#[payload.email]"
+                is="#[MunitTools::equalTo('john@test.com')]"/>
+            <munit-tools:assert-that
+                expression="#[payload.age]"
+                is="#[MunitTools::nullValue()]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-filterFields-empty-returns-all"
+                description="filterFields returns all fields when fields list is empty">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ApiUtils
+                        output application/json
+                        ---
+                        ApiUtils::filterFields(
+                            { name: "John", email: "john@test.com" },
+                            []
+                        )
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.name]"
+                is="#[MunitTools::equalTo('John')]"/>
+            <munit-tools:assert-that
+                expression="#[payload.email]"
+                is="#[MunitTools::equalTo('john@test.com')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== sortBy ==================== -->
+
+    <munit:test name="test-sortBy-ascending"
+                description="sortBy sorts array ascending by default">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ApiUtils
+                        output application/json
+                        ---
+                        ApiUtils::sortBy(
+                            [{ name: "Charlie", age: 30 }, { name: "Alice", age: 25 }, { name: "Bob", age: 28 }],
+                            "name"
+                        )
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload[0].name]"
+                is="#[MunitTools::equalTo('Alice')]"/>
+            <munit-tools:assert-that
+                expression="#[payload[2].name]"
+                is="#[MunitTools::equalTo('Charlie')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-sortBy-descending"
+                description="sortBy sorts array descending when specified">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ApiUtils
+                        output application/json
+                        ---
+                        ApiUtils::sortBy(
+                            [{ name: "Alice", age: 25 }, { name: "Bob", age: 28 }, { name: "Charlie", age: 30 }],
+                            "age",
+                            "desc"
+                        )
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload[0].name]"
+                is="#[MunitTools::equalTo('Charlie')]"/>
+            <munit-tools:assert-that
+                expression="#[payload[2].name]"
+                is="#[MunitTools::equalTo('Alice')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== buildSuccessResponse ==================== -->
+
+    <munit:test name="test-buildSuccessResponse-basic"
+                description="buildSuccessResponse wraps data in success envelope">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ApiUtils
+                        output application/json
+                        ---
+                        ApiUtils::buildSuccessResponse({ id: 1, name: "John" })
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.success]"
+                is="#[MunitTools::equalTo(true)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.data.name]"
+                is="#[MunitTools::equalTo('John')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-buildSuccessResponse-with-meta"
+                description="buildSuccessResponse includes meta when provided">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ApiUtils
+                        output application/json
+                        ---
+                        ApiUtils::buildSuccessResponse(
+                            [1, 2, 3],
+                            { count: 3, source: "db" }
+                        )
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.success]"
+                is="#[MunitTools::equalTo(true)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.meta.count]"
+                is="#[MunitTools::equalTo(3)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== buildErrorResponse ==================== -->
+
+    <munit:test name="test-buildErrorResponse-404"
+                description="buildErrorResponse creates RFC 7807 error">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ApiUtils
+                        output application/json
+                        ---
+                        ApiUtils::buildErrorResponse(404, "Not Found", "Customer CUST-001 not found")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.status]"
+                is="#[MunitTools::equalTo(404)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.title]"
+                is="#[MunitTools::equalTo('Not Found')]"/>
+            <munit-tools:assert-that
+                expression="#[payload.detail]"
+                is="#[MunitTools::containsString('CUST-001')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== addETag ==================== -->
+
+    <munit:test name="test-addETag-returns-quoted-hash"
+                description="addETag returns a quoted MD5 hash string">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ApiUtils
+                        output application/json
+                        ---
+                        ApiUtils::addETag({ id: 1, name: "test" })
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::notNullValue()]"/>
+            <munit-tools:assert-that
+                expression="#[payload startsWith '\"']"
+                is="#[MunitTools::equalTo(true)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-addETag-deterministic"
+                description="addETag returns same hash for same input">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ApiUtils
+                        output application/json
+                        ---
+                        {
+                            hash1: ApiUtils::addETag({ key: "value" }),
+                            hash2: ApiUtils::addETag({ key: "value" })
+                        }
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.hash1]"
+                is="#[MunitTools::equalTo(payload.hash2)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== buildBulkResult ==================== -->
+
+    <munit:test name="test-buildBulkResult-all-success"
+                description="buildBulkResult summarizes all-success batch">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ApiUtils
+                        output application/json
+                        ---
+                        ApiUtils::buildBulkResult([
+                            { id: "1", status: "SUCCESS" },
+                            { id: "2", status: "SUCCESS" }
+                        ])
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.summary.total]"
+                is="#[MunitTools::equalTo(2)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.summary.successful]"
+                is="#[MunitTools::equalTo(2)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.summary.failed]"
+                is="#[MunitTools::equalTo(0)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-buildBulkResult-mixed"
+                description="buildBulkResult includes error details for failures">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ApiUtils
+                        output application/json
+                        ---
+                        ApiUtils::buildBulkResult([
+                            { id: "1", status: "SUCCESS" },
+                            { id: "2", status: "FAILED", error: "Duplicate key" },
+                            { id: "3", status: "FAILED", error: "Invalid format" }
+                        ])
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.summary.successful]"
+                is="#[MunitTools::equalTo(1)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.summary.failed]"
+                is="#[MunitTools::equalTo(2)]"/>
+            <munit-tools:assert-that
+                expression="#[sizeOf(payload.errors)]"
+                is="#[MunitTools::equalTo(2)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== toQueryString ==================== -->
+
+    <munit:test name="test-toQueryString"
+                description="toQueryString converts object to URL query string">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ApiUtils
+                        output application/json
+                        ---
+                        ApiUtils::toQueryString({ name: "John", age: 30 })
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::containsString('name=John')]"/>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::containsString('age=30')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== fromQueryString ==================== -->
+
+    <munit:test name="test-fromQueryString"
+                description="fromQueryString parses query string to object">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ApiUtils
+                        output application/json
+                        ---
+                        ApiUtils::fromQueryString("name=John&age=30&city=NYC")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.name]"
+                is="#[MunitTools::equalTo('John')]"/>
+            <munit-tools:assert-that
+                expression="#[payload.age]"
+                is="#[MunitTools::equalTo('30')]"/>
+            <munit-tools:assert-that
+                expression="#[payload.city]"
+                is="#[MunitTools::equalTo('NYC')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-queryString-roundtrip"
+                description="toQueryString and fromQueryString are complementary">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ApiUtils
+                        output application/json
+                        ---
+                        ApiUtils::fromQueryString(ApiUtils::toQueryString({ key: "value", foo: "bar" }))
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.key]"
+                is="#[MunitTools::equalTo('value')]"/>
+            <munit-tools:assert-that
+                expression="#[payload.foo]"
+                is="#[MunitTools::equalTo('bar')]"/>
+        </munit:validation>
+    </munit:test>
+
+</mule>

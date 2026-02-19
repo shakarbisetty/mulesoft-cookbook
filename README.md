@@ -4,7 +4,8 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![DataWeave 2.x](https://img.shields.io/badge/DataWeave-2.x-blueviolet.svg)](https://docs.mulesoft.com/dataweave/)
 [![GitHub Stars](https://img.shields.io/github/stars/shakarbisetty/dataweave-patterns?style=social)](https://github.com/shakarbisetty/dataweave-patterns)
-[![50+ Patterns](https://img.shields.io/badge/patterns-50%2B-orange.svg)](#table-of-contents)
+[![80+ Patterns](https://img.shields.io/badge/patterns-80%2B-orange.svg)](#table-of-contents)
+[![7 Exchange Modules](https://img.shields.io/badge/Exchange_Modules-7-ff6900.svg)](#anypoint-exchange-modules)
 
 > Production-ready DataWeave 2.x patterns for MuleSoft developers — copy, paste, transform.
 
@@ -21,10 +22,12 @@
 
 ## What's Inside
 
-- **50 DataWeave patterns** across 10 categories — each with realistic input/output, working code, and alternative syntax
+- **80 DataWeave patterns** across 15 categories — each with realistic input/output, working code, and alternative syntax
+- **7 Anypoint Exchange modules** with 90+ reusable functions and 170+ MUnit tests
 - **[DW 2.x Cheatsheet](cheatsheet/dataweave-2x-cheatsheet.md)** — comprehensive quick-reference ([PDF](cheatsheet/dataweave-2x-cheatsheet.pdf))
 - **[Anti-Patterns Guide](anti-patterns/common-mistakes.md)** — 12 common mistakes and how to fix them
-- **[DW 1.0 → 2.0 Migration Guide](anti-patterns/dw1-vs-dw2-migration.md)** — side-by-side syntax changes
+- **[DW 1.0 → 2.0 Migration Guide](anti-patterns/dw1-vs-dw2-migration.md)** — comprehensive migration with MEL mapping, MUnit 2, and 40+ expression conversions
+- **[MEL to DataWeave Guide](anti-patterns/mel-to-dataweave.md)** — standalone MEL → DW 2.0 reference with 40+ expression mappings
 - **[Playground Tips](playground/)** — test any pattern in MuleSoft's online playground
 
 ---
@@ -61,16 +64,21 @@ No install. No dependencies. Just working DataWeave.
 
 | # | Category | Patterns | Difficulty Range |
 |---|----------|----------|-----------------|
-| 01 | [Array Manipulation](#01--array-manipulation) | 8 patterns | Beginner → Advanced |
-| 02 | [Object Transformation](#02--object-transformation) | 6 patterns | Beginner → Advanced |
+| 01 | [Array Manipulation](#01--array-manipulation) | 9 patterns | Beginner → Advanced |
+| 02 | [Object Transformation](#02--object-transformation) | 7 patterns | Beginner → Advanced |
 | 03 | [String Operations](#03--string-operations) | 5 patterns | Beginner → Intermediate |
 | 04 | [Type Coercion](#04--type-coercion) | 4 patterns | Beginner → Advanced |
-| 05 | [XML Handling](#05--xml-handling) | 5 patterns | Intermediate → Advanced |
-| 06 | [CSV Operations](#06--csv-operations) | 3 patterns | Beginner → Intermediate |
-| 07 | [Error Handling](#07--error-handling) | 4 patterns | Beginner → Intermediate |
+| 05 | [XML Handling](#05--xml-handling) | 6 patterns | Intermediate → Advanced |
+| 06 | [CSV Operations](#06--csv-operations) | 4 patterns | Beginner → Intermediate |
+| 07 | [Error Handling](#07--error-handling) | 5 patterns | Beginner → Intermediate |
 | 08 | [Date/Time](#08--datetime) | 4 patterns | Beginner → Intermediate |
-| 09 | [Advanced Patterns](#09--advanced-patterns) | 5 patterns | Advanced |
+| 09 | [Advanced Patterns](#09--advanced-patterns) | 6 patterns | Advanced |
 | 10 | [Real-World Mappings](#10--real-world-mappings) | 6 patterns | Intermediate → Advanced |
+| 11 | [Security & Encoding](#11--security--encoding) | 6 patterns | Intermediate → Advanced |
+| 12 | [API Response Patterns](#12--api-response-patterns) | 5 patterns | Intermediate → Advanced |
+| 13 | [Flat File / Fixed Width](#13--flat-file--fixed-width) | 4 patterns | Intermediate → Advanced |
+| 14 | [Lookup & Enrichment](#14--lookup--enrichment) | 4 patterns | Intermediate → Advanced |
+| 15 | [Performance Optimization](#15--performance-optimization) | 5 patterns | Advanced |
 
 ---
 
@@ -86,6 +94,7 @@ No install. No dependencies. Just working DataWeave.
 | Order/Sort | [`order-by.dwl`](patterns/01-array-manipulation/order-by.dwl) | Beginner |
 | Reduce/Accumulate | [`reduce-accumulate.dwl`](patterns/01-array-manipulation/reduce-accumulate.dwl) | Advanced |
 | Zip Arrays | [`zip-arrays.dwl`](patterns/01-array-manipulation/zip-arrays.dwl) | Intermediate |
+| Sliding Window | [`sliding-window.dwl`](patterns/01-array-manipulation/sliding-window.dwl) | Advanced |
 
 ### 02 — Object Transformation
 
@@ -97,6 +106,7 @@ No install. No dependencies. Just working DataWeave.
 | Pluck Values | [`pluck-values.dwl`](patterns/02-object-transformation/pluck-values.dwl) | Intermediate |
 | Dynamic Keys | [`dynamic-keys.dwl`](patterns/02-object-transformation/dynamic-keys.dwl) | Advanced |
 | Nested Object Update | [`nested-object-update.dwl`](patterns/02-object-transformation/nested-object-update.dwl) | Advanced |
+| Object to Pairs | [`object-to-pairs.dwl`](patterns/02-object-transformation/object-to-pairs.dwl) | Intermediate |
 
 ### 03 — String Operations
 
@@ -126,6 +136,7 @@ No install. No dependencies. Just working DataWeave.
 | Namespace Handling | [`namespace-handling.dwl`](patterns/05-xml-handling/namespace-handling.dwl) | Advanced |
 | CDATA Handling | [`cdata-handling.dwl`](patterns/05-xml-handling/cdata-handling.dwl) | Intermediate |
 | Attribute Extraction | [`attributes-extraction.dwl`](patterns/05-xml-handling/attributes-extraction.dwl) | Intermediate |
+| SOAP Envelope Builder | [`soap-envelope-builder.dwl`](patterns/05-xml-handling/soap-envelope-builder.dwl) | Advanced |
 
 ### 06 — CSV Operations
 
@@ -134,6 +145,7 @@ No install. No dependencies. Just working DataWeave.
 | CSV to JSON | [`csv-to-json.dwl`](patterns/06-csv-operations/csv-to-json.dwl) | Beginner |
 | JSON to CSV | [`json-to-csv.dwl`](patterns/06-csv-operations/json-to-csv.dwl) | Beginner |
 | Custom Separator | [`custom-separator.dwl`](patterns/06-csv-operations/custom-separator.dwl) | Intermediate |
+| Multiline CSV | [`multiline-csv.dwl`](patterns/06-csv-operations/multiline-csv.dwl) | Intermediate |
 
 ### 07 — Error Handling
 
@@ -143,6 +155,7 @@ No install. No dependencies. Just working DataWeave.
 | Try Pattern | [`try-pattern.dwl`](patterns/07-error-handling/try-pattern.dwl) | Intermediate |
 | Error Response Builder | [`error-response-builder.dwl`](patterns/07-error-handling/error-response-builder.dwl) | Intermediate |
 | Conditional Error | [`conditional-error.dwl`](patterns/07-error-handling/conditional-error.dwl) | Intermediate |
+| Retry Backoff Config | [`retry-backoff-config.dwl`](patterns/07-error-handling/retry-backoff-config.dwl) | Advanced |
 
 ### 08 — Date/Time
 
@@ -162,6 +175,7 @@ No install. No dependencies. Just working DataWeave.
 | Multi-Level GroupBy | [`multi-level-groupby.dwl`](patterns/09-advanced-patterns/multi-level-groupby.dwl) | Advanced |
 | Dynamic Schema | [`dynamic-schema.dwl`](patterns/09-advanced-patterns/dynamic-schema.dwl) | Advanced |
 | Tail Recursion | [`tail-recursion.dwl`](patterns/09-advanced-patterns/tail-recursion.dwl) | Advanced |
+| Pattern Matching | [`pattern-matching.dwl`](patterns/09-advanced-patterns/pattern-matching.dwl) | Advanced |
 
 ### 10 — Real-World Mappings
 
@@ -174,6 +188,55 @@ No install. No dependencies. Just working DataWeave.
 | SOAP to REST | [`soap-to-rest.dwl`](patterns/10-real-world-mappings/soap-to-rest.dwl) | Intermediate |
 | Canonical Data Model | [`canonical-data-model.dwl`](patterns/10-real-world-mappings/canonical-data-model.dwl) | Advanced |
 
+### 11 — Security & Encoding
+
+| Pattern | File | Difficulty |
+|---------|------|-----------|
+| Base64 Encoding | [`base64-encoding.dwl`](patterns/11-security-encoding/base64-encoding.dwl) | Intermediate |
+| JWT Decode | [`jwt-decode.dwl`](patterns/11-security-encoding/jwt-decode.dwl) | Advanced |
+| URL Encoding | [`url-encoding.dwl`](patterns/11-security-encoding/url-encoding.dwl) | Intermediate |
+| Data Masking | [`data-masking.dwl`](patterns/11-security-encoding/data-masking.dwl) | Intermediate |
+| HMAC Signature | [`hmac-signature.dwl`](patterns/11-security-encoding/hmac-signature.dwl) | Advanced |
+| XML Signature Prep | [`xml-signature-prep.dwl`](patterns/11-security-encoding/xml-signature-prep.dwl) | Advanced |
+
+### 12 — API Response Patterns
+
+| Pattern | File | Difficulty |
+|---------|------|-----------|
+| Pagination Response | [`pagination-response.dwl`](patterns/12-api-response-patterns/pagination-response.dwl) | Intermediate |
+| Error Envelope (RFC 7807) | [`error-envelope.dwl`](patterns/12-api-response-patterns/error-envelope.dwl) | Intermediate |
+| HATEOAS Links | [`hateoas-links.dwl`](patterns/12-api-response-patterns/hateoas-links.dwl) | Advanced |
+| Bulk Response Builder | [`bulk-response-builder.dwl`](patterns/12-api-response-patterns/bulk-response-builder.dwl) | Advanced |
+| Response Filtering | [`response-filtering.dwl`](patterns/12-api-response-patterns/response-filtering.dwl) | Intermediate |
+
+### 13 — Flat File / Fixed Width
+
+| Pattern | File | Difficulty |
+|---------|------|-----------|
+| Fixed Width Parse | [`fixed-width-parse.dwl`](patterns/13-flat-file-fixed-width/fixed-width-parse.dwl) | Intermediate |
+| Fixed Width Generate | [`fixed-width-generate.dwl`](patterns/13-flat-file-fixed-width/fixed-width-generate.dwl) | Intermediate |
+| Multi-Record Flat File | [`multi-record-flatfile.dwl`](patterns/13-flat-file-fixed-width/multi-record-flatfile.dwl) | Advanced |
+| Flat File to JSON | [`flatfile-to-json.dwl`](patterns/13-flat-file-fixed-width/flatfile-to-json.dwl) | Advanced |
+
+### 14 — Lookup & Enrichment
+
+| Pattern | File | Difficulty |
+|---------|------|-----------|
+| Lookup Table Join | [`lookup-table-join.dwl`](patterns/14-lookup-enrichment/lookup-table-join.dwl) | Intermediate |
+| Conditional Enrichment | [`conditional-enrichment.dwl`](patterns/14-lookup-enrichment/conditional-enrichment.dwl) | Intermediate |
+| Cross-Reference Mapping | [`cross-reference-mapping.dwl`](patterns/14-lookup-enrichment/cross-reference-mapping.dwl) | Advanced |
+| Hierarchical Lookup | [`hierarchical-lookup.dwl`](patterns/14-lookup-enrichment/hierarchical-lookup.dwl) | Advanced |
+
+### 15 — Performance Optimization
+
+| Pattern | File | Difficulty |
+|---------|------|-----------|
+| Lazy Evaluation | [`lazy-evaluation.dwl`](patterns/15-performance-optimization/lazy-evaluation.dwl) | Advanced |
+| Streaming Reduce | [`streaming-reduce.dwl`](patterns/15-performance-optimization/streaming-reduce.dwl) | Advanced |
+| Index-Based Lookup | [`index-based-lookup.dwl`](patterns/15-performance-optimization/index-based-lookup.dwl) | Intermediate |
+| Selective Transform | [`selective-transform.dwl`](patterns/15-performance-optimization/selective-transform.dwl) | Advanced |
+| Parallel-Safe Chunking | [`parallel-safe-chunking.dwl`](patterns/15-performance-optimization/parallel-safe-chunking.dwl) | Advanced |
+
 ---
 
 ### References
@@ -181,6 +244,7 @@ No install. No dependencies. Just working DataWeave.
 - [DW 2.x Cheatsheet](cheatsheet/dataweave-2x-cheatsheet.md) | [PDF download](cheatsheet/dataweave-2x-cheatsheet.pdf)
 - [Anti-Patterns & Common Mistakes](anti-patterns/common-mistakes.md)
 - [DW 1.0 → 2.0 Migration Guide](anti-patterns/dw1-vs-dw2-migration.md)
+- [MEL to DataWeave Guide](anti-patterns/mel-to-dataweave.md)
 - [Playground Tips](playground/)
 
 ---
@@ -189,13 +253,15 @@ No install. No dependencies. Just working DataWeave.
 
 Reusable DataWeave utility libraries — import via Maven, no copy-paste needed.
 
-| Module | Description | Status |
-|--------|-------------|--------|
-| `dw-string-utils` | 15+ string functions (camelize, slugify, mask, etc.) | Live on Exchange |
-| `dw-date-utils` | 11 date functions (addDays, diffDays, toEpoch, etc.) | Live on Exchange |
-| `dw-collection-utils` | 15+ collection functions (chunk, deepMerge, pivot, etc.) | Live on Exchange |
-| `dw-error-handler` | 8 error functions (classifyError, isRetryable, etc.) | Live on Exchange |
-| `dw-xml-helpers` | 10 XML functions (stripNamespaces, xpathLike, etc.) | Live on Exchange |
+| Module | Functions | Tests | Description |
+|--------|-----------|-------|-------------|
+| [`dw-string-utils`](modules/dw-string-utils/) | 19 | 37 | String utilities (camelize, slugify, mask, substringBefore, initials, etc.) |
+| [`dw-date-utils`](modules/dw-date-utils/) | 14 | 32 | Date/time utilities (addDays, diffDays, toBusinessDay, quarter, etc.) |
+| [`dw-collection-utils`](modules/dw-collection-utils/) | 19 | 29 | Collection utilities (chunk, deepMerge, sliding, zip, transpose, etc.) |
+| [`dw-error-handler`](modules/dw-error-handler/) | 10 | 26 | Error handling (classifyError, isRetryable, toRFC7807, errorChain, etc.) |
+| [`dw-xml-helpers`](modules/dw-xml-helpers/) | 12 | 24 | XML utilities (stripNamespaces, xpathLike, soapEnvelope, xmlToString, etc.) |
+| [`dw-validation-utils`](modules/dw-validation-utils/) | 12 | 24 | Validation (isRequired, matchesPattern, validateAll, isUUID, etc.) |
+| [`dw-api-utils`](modules/dw-api-utils/) | 10 | 22 | API response helpers (paginate, buildLinks, filterFields, addETag, etc.) |
 
 ---
 
