@@ -572,4 +572,127 @@
         </munit:validation>
     </munit:test>
 
+    <!-- ==================== isValidDate Edge Cases ==================== -->
+
+    <munit:test name="test-isValidDate-valid"
+                description="isValidDate returns valid for correct date format">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ValidationUtils
+                        output application/json
+                        ---
+                        ValidationUtils::isValidDate("2026-02-15", "yyyy-MM-dd", "birthDate")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.valid]"
+                is="#[MunitTools::equalTo(true)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-isValidDate-invalid-format"
+                description="isValidDate returns invalid for wrong date format">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ValidationUtils
+                        output application/json
+                        ---
+                        ValidationUtils::isValidDate("not-a-date", "yyyy-MM-dd", "startDate")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.valid]"
+                is="#[MunitTools::equalTo(false)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.field]"
+                is="#[MunitTools::equalTo('startDate')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-isValidDate-wrong-format"
+                description="isValidDate rejects date in different format">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ValidationUtils
+                        output application/json
+                        ---
+                        ValidationUtils::isValidDate("02/15/2026", "yyyy-MM-dd", "date")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.valid]"
+                is="#[MunitTools::equalTo(false)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <!-- ==================== Edge Cases for Boundary Values ==================== -->
+
+    <munit:test name="test-inRange-boundary-inclusive"
+                description="inRange passes for values at exact boundaries">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ValidationUtils
+                        output application/json
+                        ---
+                        {
+                            atMin: ValidationUtils::inRange(1, 1, 100, "age"),
+                            atMax: ValidationUtils::inRange(100, 1, 100, "age")
+                        }
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.atMin.valid]"
+                is="#[MunitTools::equalTo(true)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.atMax.valid]"
+                is="#[MunitTools::equalTo(true)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-minLength-exact-boundary"
+                description="minLength passes for string at exact minimum">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ValidationUtils
+                        output application/json
+                        ---
+                        ValidationUtils::minLength("abc", 3, "code")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.valid]"
+                is="#[MunitTools::equalTo(true)]"/>
+        </munit:validation>
+    </munit:test>
+
 </mule>

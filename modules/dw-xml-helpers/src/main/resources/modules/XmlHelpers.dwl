@@ -60,7 +60,7 @@ fun stripNamespaces(xml: Object): Object =
  *   -> {id: "SKU-100", category: "electronics"}
  */
 fun extractAttributes(xml: Object, elem: String): Object =
-    xml.elem.@ default {}
+    xml[elem].@ default {}
 
 /**
  * Wrap a string value as CDATA for XML output.

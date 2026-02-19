@@ -23,7 +23,7 @@
 ## What's Inside
 
 - **80 DataWeave patterns** across 15 categories — each with realistic input/output, working code, and alternative syntax
-- **7 Anypoint Exchange modules** with 90+ reusable functions and 170+ MUnit tests
+- **7 Anypoint Exchange modules** with 96 reusable functions and 213 MUnit tests
 - **[DW 2.x Cheatsheet](cheatsheet/dataweave-2x-cheatsheet.md)** — comprehensive quick-reference ([PDF](cheatsheet/dataweave-2x-cheatsheet.pdf))
 - **[Anti-Patterns Guide](anti-patterns/common-mistakes.md)** — 12 common mistakes and how to fix them
 - **[DW 1.0 → 2.0 Migration Guide](anti-patterns/dw1-vs-dw2-migration.md)** — comprehensive migration with MEL mapping, MUnit 2, and 40+ expression conversions
@@ -255,13 +255,13 @@ Reusable DataWeave utility libraries — import via Maven, no copy-paste needed.
 
 | Module | Functions | Tests | Description |
 |--------|-----------|-------|-------------|
-| [`dw-string-utils`](modules/dw-string-utils/) | 19 | 37 | String utilities (camelize, slugify, mask, substringBefore, initials, etc.) |
-| [`dw-date-utils`](modules/dw-date-utils/) | 14 | 32 | Date/time utilities (addDays, diffDays, toBusinessDay, quarter, etc.) |
-| [`dw-collection-utils`](modules/dw-collection-utils/) | 19 | 29 | Collection utilities (chunk, deepMerge, sliding, zip, transpose, etc.) |
-| [`dw-error-handler`](modules/dw-error-handler/) | 10 | 26 | Error handling (classifyError, isRetryable, toRFC7807, errorChain, etc.) |
-| [`dw-xml-helpers`](modules/dw-xml-helpers/) | 12 | 24 | XML utilities (stripNamespaces, xpathLike, soapEnvelope, xmlToString, etc.) |
-| [`dw-validation-utils`](modules/dw-validation-utils/) | 12 | 24 | Validation (isRequired, matchesPattern, validateAll, isUUID, etc.) |
-| [`dw-api-utils`](modules/dw-api-utils/) | 10 | 22 | API response helpers (paginate, buildLinks, filterFields, addETag, etc.) |
+| [`dw-string-utils`](modules/dw-string-utils/) | 19 | 35 | String utilities (camelize, slugify, mask, substringBefore, initials, etc.) |
+| [`dw-date-utils`](modules/dw-date-utils/) | 14 | 36 | Date/time utilities (addDays, diffDays, toBusinessDay, quarter, etc.) |
+| [`dw-collection-utils`](modules/dw-collection-utils/) | 19 | 34 | Collection utilities (chunk, deepMerge, sliding, zip, transpose, etc.) |
+| [`dw-error-handler`](modules/dw-error-handler/) | 10 | 25 | Error handling (classifyError, isRetryable, toRFC7807, errorChain, etc.) |
+| [`dw-xml-helpers`](modules/dw-xml-helpers/) | 12 | 27 | XML utilities (stripNamespaces, xpathLike, soapEnvelope, xmlToString, etc.) |
+| [`dw-validation-utils`](modules/dw-validation-utils/) | 12 | 30 | Validation (isRequired, matchesPattern, validateAll, isUUID, etc.) |
+| [`dw-api-utils`](modules/dw-api-utils/) | 10 | 26 | API response helpers (paginate, buildLinks, filterFields, addETag, etc.) |
 
 ---
 

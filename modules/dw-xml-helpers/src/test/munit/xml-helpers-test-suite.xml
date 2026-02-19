@@ -555,4 +555,75 @@
         </munit:validation>
     </munit:test>
 
+    <!-- ==================== Edge Case Tests ==================== -->
+
+    <munit:test name="test-extractAttributes-missing-element"
+                description="extractAttributes returns empty object for non-existent element">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::XmlHelpers
+                        output application/json
+                        ---
+                        XmlHelpers::extractAttributes({product: "Widget"}, "nonExistent")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[sizeOf(payload)]"
+                is="#[MunitTools::equalTo(0)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-xpathLike-single-segment"
+                description="xpathLike works with single-level path">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::XmlHelpers
+                        output application/json
+                        ---
+                        XmlHelpers::xpathLike({name: "Alice"}, "name")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('Alice')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-validateStructure-empty-object"
+                description="validateStructure flags all keys as missing for empty object">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::XmlHelpers
+                        output application/json
+                        ---
+                        XmlHelpers::validateStructure({}, {name: "String", age: "Number"})
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.valid]"
+                is="#[MunitTools::equalTo(false)]"/>
+            <munit-tools:assert-that
+                expression="#[sizeOf(payload.missing)]"
+                is="#[MunitTools::equalTo(2)]"/>
+        </munit:validation>
+    </munit:test>
+
 </mule>

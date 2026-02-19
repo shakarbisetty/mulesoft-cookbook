@@ -77,4 +77,4 @@ output application/json
 
 ## Tests
 
-22 MUnit tests covering all 10 functions.
+26 MUnit tests covering all 10 functions including edge cases for empty arrays, zero page size, empty query strings, and empty sort inputs.

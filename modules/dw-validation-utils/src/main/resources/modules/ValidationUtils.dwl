@@ -55,8 +55,12 @@ fun matchesPattern(s: String, regex: String, fieldName: String = "field"): Objec
  * Validate a string is a parseable date in the given format.
  */
 fun isValidDate(s: String, fmt: String, fieldName: String = "field"): Object =
-    if ((s as Date {format: fmt}) != null) { valid: true }
-    else { valid: false, field: fieldName, error: "$(fieldName) is not a valid date (expected format: $(fmt))" }
+    do {
+        var parsed = try(() -> s as Date {format: fmt})
+        ---
+        if (parsed.success) { valid: true }
+        else { valid: false, field: fieldName, error: "$(fieldName) is not a valid date (expected format: $(fmt))" }
+    }
 
 /**
  * Validate a value is one of an allowed set.

@@ -697,4 +697,122 @@
         </munit:validation>
     </munit:test>
 
+    <!-- ==================== Edge Case Tests ==================== -->
+
+    <munit:test name="test-chunk-empty-array"
+                description="chunk returns empty array for empty input">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::CollectionUtils
+                        output application/json
+                        ---
+                        CollectionUtils::chunk([], 3)
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo([])]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-zip-unequal-lengths"
+                description="zip truncates to shorter array">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::CollectionUtils
+                        output application/json
+                        ---
+                        CollectionUtils::zip(["a", "b"], [1, 2, 3, 4])
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[sizeOf(payload)]"
+                is="#[MunitTools::equalTo(2)]"/>
+            <munit-tools:assert-that
+                expression="#[payload[1]]"
+                is="#[MunitTools::equalTo(['b', 2])]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-compact-empty-array"
+                description="compact returns empty array for empty input">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::CollectionUtils
+                        output application/json
+                        ---
+                        CollectionUtils::compact([])
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo([])]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-partition-all-pass"
+                description="partition puts all elements in pass when all match">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::CollectionUtils
+                        output application/json
+                        ---
+                        CollectionUtils::partition([2, 4, 6], (n) -> mod(n, 2) == 0)
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.pass]"
+                is="#[MunitTools::equalTo([2, 4, 6])]"/>
+            <munit-tools:assert-that
+                expression="#[payload.fail]"
+                is="#[MunitTools::equalTo([])]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-difference-empty-result"
+                description="difference returns empty when all elements overlap">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::CollectionUtils
+                        output application/json
+                        ---
+                        CollectionUtils::difference([1, 2, 3], [1, 2, 3, 4])
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo([])]"/>
+        </munit:validation>
+    </munit:test>
+
 </mule>

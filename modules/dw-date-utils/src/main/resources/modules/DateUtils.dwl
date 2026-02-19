@@ -69,7 +69,7 @@ fun formatDate(d: DateTime, fmt: String): String =
 /**
  * Check if a Date falls on a weekend (Saturday or Sunday).
  * isWeekend(|2026-02-14|) -> true  (Saturday)
- * isWeekend(|2026-02-16|) -> true  (Sunday -- wait, let me verify)
+ * isWeekend(|2026-02-15|) -> true  (Sunday)
  *
  * Note: Uses dayOfWeek where 6=Saturday, 7=Sunday.
  */

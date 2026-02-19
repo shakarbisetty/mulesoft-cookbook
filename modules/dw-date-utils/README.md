@@ -1,6 +1,6 @@
 # dw-date-utils
 
-> 11 reusable date/time utility functions for DataWeave 2.x
+> 14 reusable date/time utility functions for DataWeave 2.x
 
 ---
 
@@ -53,10 +53,13 @@ output application/json
 | `startOfMonth` | `(d: Date) -> Date` | First day of month |
 | `endOfMonth` | `(d: Date) -> Date` | Last day of month |
 | `isLeapYear` | `(y: Number) -> Boolean` | Leap year check |
+| `toBusinessDay` | `(d: Date) -> Date` | Adjust weekend date to next Monday |
+| `quarter` | `(d: Date) -> Number` | Fiscal quarter (1-4) for a date |
+| `daysBetweenBusiness` | `(d1: Date, d2: Date) -> Number` | Count weekdays between two dates |
 
 ## Testing
 
-26 MUnit test cases covering all 11 functions with basic, edge, and boundary inputs (leap years, month boundaries, negative offsets, epoch zero).
+36 MUnit test cases covering all 14 functions with basic, edge, and boundary inputs (leap years, month boundaries, negative offsets, epoch zero, weekend handling, quarter boundaries).
 
 ```bash
 mvn clean test

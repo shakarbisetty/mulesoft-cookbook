@@ -1,6 +1,6 @@
 # dw-string-utils
 
-> 15 reusable string utility functions for DataWeave 2.x
+> 19 reusable string utility functions for DataWeave 2.x
 
 ---
 
@@ -57,10 +57,14 @@ output application/json
 | `removeWhitespace` | `(s: String) -> String` | Strip all whitespace |
 | `reverse` | `(s: String) -> String` | Reverse characters |
 | `countOccurrences` | `(s: String, sub: String) -> Number` | Count substring matches |
+| `substringBefore` | `(s: String, sep: String) -> String` | Text before first separator |
+| `substringAfter` | `(s: String, sep: String) -> String` | Text after first separator |
+| `wrap` | `(s: String, prefix: String, suffix: String) -> String` | Wrap string with prefix/suffix |
+| `initials` | `(s: String) -> String` | Extract uppercase initials from name |
 
 ## Testing
 
-30 MUnit test cases covering all 15 functions with basic and edge-case inputs.
+35 MUnit test cases covering all 19 functions with basic and edge-case inputs.
 
 ```bash
 mvn clean test

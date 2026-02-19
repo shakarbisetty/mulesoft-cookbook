@@ -728,4 +728,108 @@
         </munit:validation>
     </munit:test>
 
+    <!-- ==================== Edge Case Tests ==================== -->
+
+    <munit:test name="test-toBusinessDay-sunday"
+                description="toBusinessDay shifts Sunday to Monday">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::toBusinessDay(|2026-02-15|) as String {format: "yyyy-MM-dd"}
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('2026-02-16')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-quarter-boundary-months"
+                description="quarter returns correct value at quarter boundaries">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        {
+                            march: DateUtils::quarter(|2026-03-31|),
+                            april: DateUtils::quarter(|2026-04-01|),
+                            june: DateUtils::quarter(|2026-06-30|),
+                            july: DateUtils::quarter(|2026-07-01|)
+                        }
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload.march]"
+                is="#[MunitTools::equalTo(1)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.april]"
+                is="#[MunitTools::equalTo(2)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.june]"
+                is="#[MunitTools::equalTo(2)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.july]"
+                is="#[MunitTools::equalTo(3)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-daysBetweenBusiness-same-date"
+                description="daysBetweenBusiness returns 0 for same date">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::daysBetweenBusiness(|2026-02-16|, |2026-02-16|)
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(0)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-addDays-zero"
+                description="addDays with 0 returns same date">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::DateUtils
+                        output application/json
+                        ---
+                        DateUtils::addDays(|2026-02-15|, 0) as String {format: "yyyy-MM-dd"}
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('2026-02-15')]"/>
+        </munit:validation>
+    </munit:test>
+
 </mule>

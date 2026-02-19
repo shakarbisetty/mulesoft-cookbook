@@ -560,4 +560,103 @@
         </munit:validation>
     </munit:test>
 
+    <!-- ==================== Edge Case Tests ==================== -->
+
+    <munit:test name="test-paginate-empty-array"
+                description="paginate handles empty array input">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ApiUtils
+                        output application/json
+                        ---
+                        ApiUtils::paginate([], 1, 10)
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[sizeOf(payload.data)]"
+                is="#[MunitTools::equalTo(0)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.meta.totalRecords]"
+                is="#[MunitTools::equalTo(0)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.meta.totalPages]"
+                is="#[MunitTools::equalTo(0)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-paginate-zero-size-fallback"
+                description="paginate defaults to safe size when size is 0">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ApiUtils
+                        output application/json
+                        ---
+                        ApiUtils::paginate([1, 2, 3], 1, 0)
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[sizeOf(payload.data)]"
+                is="#[MunitTools::equalTo(3)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.meta.totalPages]"
+                is="#[MunitTools::equalTo(1)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-fromQueryString-empty"
+                description="fromQueryString returns empty object for empty string">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ApiUtils
+                        output application/json
+                        ---
+                        ApiUtils::fromQueryString("")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[sizeOf(payload)]"
+                is="#[MunitTools::equalTo(0)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-sortBy-empty-array"
+                description="sortBy handles empty array without error">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ApiUtils
+                        output application/json
+                        ---
+                        ApiUtils::sortBy([], "name")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo([])]"/>
+        </munit:validation>
+    </munit:test>
+
 </mule>

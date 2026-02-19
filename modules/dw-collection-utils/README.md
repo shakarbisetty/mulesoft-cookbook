@@ -1,6 +1,6 @@
 # dw-collection-utils
 
-> 15 reusable array and object utility functions for DataWeave 2.x
+> 19 reusable array and object utility functions for DataWeave 2.x
 
 ---
 
@@ -59,10 +59,14 @@ output application/json
 | `partition` | `(arr: Array, fn: Function) -> Object` | Split by predicate (pass/fail) |
 | `indexBy` | `(arr: Array<Object>, key: String) -> Object` | Array to keyed lookup |
 | `countBy` | `(arr: Array, fn: Function) -> Object` | Group and count |
+| `sliding` | `(arr: Array, size: Number) -> Array` | Overlapping sliding windows |
+| `zip` | `(a: Array, b: Array) -> Array` | Pair elements from two arrays |
+| `transpose` | `(matrix: Array<Array>) -> Array<Array>` | Rows to columns (2D transpose) |
+| `frequencies` | `(arr: Array) -> Object` | Count occurrences of each element |
 
 ## Testing
 
-25 MUnit test cases covering all 15 functions with basic, edge, and boundary inputs.
+34 MUnit test cases covering all 19 functions with basic, edge, and boundary inputs.
 
 ```bash
 mvn clean test

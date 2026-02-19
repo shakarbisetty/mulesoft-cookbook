@@ -18,10 +18,11 @@ import dw::Crypto
  * Returns { data: Array, meta: { page, pageSize, totalRecords, totalPages, hasNext, hasPrevious } }
  */
 fun paginate(arr: Array, page: Number, size: Number): Object = do {
+    var safeSize = if (size > 0) size else 10
     var totalRecords = sizeOf(arr)
-    var totalPages = ceil(totalRecords / size)
-    var startIdx = (page - 1) * size
-    var endIdx = min([startIdx + size - 1, totalRecords - 1])
+    var totalPages = ceil(totalRecords / safeSize)
+    var startIdx = (page - 1) * safeSize
+    var endIdx = min([startIdx + safeSize - 1, totalRecords - 1])
     ---
     {
         data: if (startIdx >= totalRecords) [] else arr[startIdx to endIdx],
@@ -131,8 +132,10 @@ fun toQueryString(params: Object): String =
  * "name=John&age=30" → { name: "John", age: "30" }
  */
 fun fromQueryString(qs: String): Object =
-    (qs splitBy "&") reduce (pair, acc = {}) -> do {
+    if (isEmpty(trim(qs))) {}
+    else (qs splitBy "&") reduce (pair, acc = {}) -> do {
         var parts = pair splitBy "="
         ---
-        acc ++ { (parts[0]): parts[1] default "" }
+        if (isEmpty(parts[0])) acc
+        else acc ++ { (parts[0]): parts[1] default "" }
     }

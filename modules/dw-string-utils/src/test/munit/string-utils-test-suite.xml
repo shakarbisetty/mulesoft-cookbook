@@ -842,4 +842,116 @@
         </munit:validation>
     </munit:test>
 
+    <!-- ==================== Edge Case Tests ==================== -->
+
+    <munit:test name="test-truncate-len-less-than-4"
+                description="truncate handles len less than 4 without negative index">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::truncate("Hello World", 3)
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::containsString('...')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-reverse-empty-string"
+                description="reverse handles empty string">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::reverse("")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-substringAfter-not-found"
+                description="substringAfter returns full string when separator absent">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::substringAfter("no-separator", "|")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('no-separator')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-removeWhitespace-empty"
+                description="removeWhitespace handles empty string">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::removeWhitespace("")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-countOccurrences-empty-substring"
+                description="countOccurrences returns 0 for empty substring">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::StringUtils
+                        output application/json
+                        ---
+                        StringUtils::countOccurrences("hello", "")
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(0)]"/>
+        </munit:validation>
+    </munit:test>
+
 </mule>

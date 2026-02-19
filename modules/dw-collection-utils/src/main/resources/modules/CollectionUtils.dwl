@@ -20,7 +20,8 @@ import * from dw::core::Objects
  * chunk([1,2,3,4,5], 2) -> [[1,2],[3,4],[5]]
  */
 fun chunk(arr: Array, size: Number): Array =
-    if (sizeOf(arr) <= size) [arr]
+    if (isEmpty(arr)) []
+    else if (sizeOf(arr) <= size) [arr]
     else [arr[0 to (size - 1)]] ++ chunk(arr[size to -1], size)
 
 /**

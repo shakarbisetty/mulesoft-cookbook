@@ -61,4 +61,4 @@ All validation functions return a consistent format:
 
 ## Tests
 
-24 MUnit tests covering all 12 functions.
+30 MUnit tests covering all 12 functions including edge cases for date validation, boundary values, and format mismatches.

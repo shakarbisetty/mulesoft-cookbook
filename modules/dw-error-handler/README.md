@@ -1,6 +1,6 @@
 # dw-error-handler
 
-> 8 reusable error handling utility functions for DataWeave 2.x
+> 10 reusable error handling utility functions for DataWeave 2.x
 
 ---
 
@@ -56,6 +56,8 @@ var category = ErrorHandler::classifyError(err)
 | `wrapWithCorrelation` | `(error: Object, correlationId: String) -> Object` | Add correlation ID for distributed tracing |
 | `httpStatusFromError` | `(errorType: String) -> Number` | Map error category to HTTP status code |
 | `buildFaultResponse` | `(code: String, msg: String) -> Object` | SOAP fault response with timestamp |
+| `toRFC7807` | `(status: Number, title: String, detail: String, instance?: String, typeUri?: String) -> Object` | RFC 7807 Problem Details response |
+| `errorChain` | `(error: Object) -> Array<String>` | Flatten nested error causes to array |
 
 ### Error Classification Map
 
@@ -76,7 +78,7 @@ Timeout, connectivity, connection refused, retry exhausted, and HTTP status code
 
 ## Testing
 
-22 MUnit test cases covering all 8 functions with standard Mule error structures, edge cases, and missing fields.
+25 MUnit test cases covering all 10 functions with standard Mule error structures, edge cases, and missing fields.
 
 ```bash
 mvn clean test

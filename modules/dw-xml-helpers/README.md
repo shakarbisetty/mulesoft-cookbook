@@ -1,6 +1,6 @@
 # dw-xml-helpers
 
-> 10 reusable XML utility functions for DataWeave 2.x
+> 12 reusable XML utility functions for DataWeave 2.x
 
 ---
 
@@ -60,10 +60,12 @@ var soapResponse = {"soap:Envelope": {"soap:Body": {"ns1:GetPriceResponse": {"ns
 | `mergeXmlNodes` | `(a: Object, b: Object) -> Object` | Deep merge two XML trees |
 | `xpathLike` | `(xml: Any, path: String) -> Any` | Simple dot-delimited path selector |
 | `validateStructure` | `(xml: Object, schema: Object) -> Object` | Validate keys against expected schema |
+| `soapEnvelope` | `(body: Object, header: Object = {}) -> Object` | Build SOAP 1.1 envelope structure |
+| `xmlToString` | `(obj: Object) -> String` | Serialize object to XML-like string |
 
 ## Testing
 
-20 MUnit test cases covering all 10 functions with nested XML structures, namespace stripping, path selection, merge conflicts, and structural validation.
+27 MUnit test cases covering all 12 functions with nested XML structures, namespace stripping, path selection, merge conflicts, and structural validation.
 
 ```bash
 mvn clean test

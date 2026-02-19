@@ -59,6 +59,7 @@ fun titleCase(s: String): String =
  */
 fun truncate(s: String, len: Number): String =
     if (sizeOf(s) <= len) s
+    else if (len < 4) s[0 to 0] ++ "..."
     else (s[0 to (len - 4)]) ++ "..."
 
 /**

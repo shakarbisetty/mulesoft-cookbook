@@ -605,4 +605,75 @@
         </munit:validation>
     </munit:test>
 
+    <!-- ==================== Edge Case Tests ==================== -->
+
+    <munit:test name="test-classifyError-authorization"
+                description="classifyError identifies forbidden/authorization errors">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ErrorHandler
+                        output application/json
+                        ---
+                        ErrorHandler::classifyError({errorType: {identifier: "HTTP:FORBIDDEN"}})
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo('AUTHORIZATION')]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-isRetryable-429-status"
+                description="isRetryable returns true for 429 rate limiting">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ErrorHandler
+                        output application/json
+                        ---
+                        ErrorHandler::isRetryable({errorType: {identifier: "HTTP:TOO_MANY_REQUESTS"}, statusCode: 429})
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[payload]"
+                is="#[MunitTools::equalTo(true)]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="test-sanitizeError-no-sensitive-fields"
+                description="sanitizeError returns object unchanged when no sensitive fields">
+        <munit:execution>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[
+                        %dw 2.0
+                        import modules::ErrorHandler
+                        output application/json
+                        ---
+                        ErrorHandler::sanitizeError({message: "Not found", code: 404})
+                    ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that
+                expression="#[sizeOf(payload)]"
+                is="#[MunitTools::equalTo(2)]"/>
+            <munit-tools:assert-that
+                expression="#[payload.message]"
+                is="#[MunitTools::equalTo('Not found')]"/>
+        </munit:validation>
+    </munit:test>
+
 </mule>
