@@ -1,0 +1,66 @@
+name: Validate Repository Structure
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check DataWeave patterns have .dwl files
+        run: |
+          errors=0
+          for dir in dataweave/patterns/*/; do
+            if [ -d "$dir" ]; then
+              dwl_count=$(find "$dir" -name "*.dwl" -maxdepth 1 | wc -l)
+              if [ "$dwl_count" -eq 0 ]; then
+                echo "ERROR: $dir has no .dwl files"
+                errors=$((errors + 1))
+              fi
+            fi
+          done
+          if [ "$errors" -gt 0 ]; then
+            echo "Found $errors pattern directories without .dwl files"
+            exit 1
+          fi
+          echo "All pattern directories have .dwl files"
+
+      - name: Check section READMEs exist
+        run: |
+          sections="dataweave ai-agents devops migrations error-handling performance api-management"
+          errors=0
+          for section in $sections; do
+            if [ ! -f "$section/README.md" ]; then
+              echo "ERROR: Missing README.md in $section/"
+              errors=$((errors + 1))
+            fi
+          done
+          if [ "$errors" -gt 0 ]; then
+            exit 1
+          fi
+          echo "All section READMEs present"
+
+      - name: Count patterns and report
+        run: |
+          total=$(find dataweave/patterns -name "*.dwl" | wc -l)
+          categories=$(find dataweave/patterns -mindepth 1 -maxdepth 1 -type d | wc -l)
+          echo "Total patterns: $total across $categories categories"
+
+      - name: Validate DWL files have header
+        run: |
+          errors=0
+          for dwl in $(find dataweave/patterns -name "*.dwl"); do
+            if ! head -1 "$dwl" | grep -q '%dw'; then
+              echo "WARNING: $dwl may not have a valid DataWeave header"
+              errors=$((errors + 1))
+            fi
+          done
+          if [ "$errors" -gt 0 ]; then
+            echo "Found $errors files with potential header issues (non-blocking)"
+          fi
+          echo "DWL validation complete"
