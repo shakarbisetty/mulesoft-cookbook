@@ -37,8 +37,8 @@
 ## Prerequisites
 
 - Anypoint Platform account
-- Mule Runtime 4.9.6+ (for MCP Connector v1.3)
-- Java 17
+- Mule Runtime 4.9.8+ (for A2A Connector v1.0 GA) or 4.9.6+ (for MCP Connector v1.3)
+- Java 17 (OpenJDK)
 - Anypoint Studio or Anypoint Code Builder
 
 ---
