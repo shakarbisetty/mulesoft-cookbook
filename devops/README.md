@@ -14,13 +14,12 @@
 | [GitHub Actions Pipeline](github-actions-pipeline/) | Complete CI/CD: build, test, deploy across DEV → QA → PROD | Intermediate |
 | [MUnit in CI](munit-ci/) | Run MUnit tests, enforce coverage thresholds, generate reports | Beginner |
 | [Maven Setup](maven-setup/) | Mule Maven Plugin config — authentication, deployment, Exchange | Beginner |
+| [CloudHub 2.0 Deployment](cloudhub2-deployment/) | Architecture, networking, autoscaling, monitoring, migration | Intermediate |
 
 ## Coming Soon
 
 | Topic | Description |
 |-------|-------------|
-| CloudHub 2.0 Deployment | Advanced deployment patterns, autoscaling, rolling updates |
-| Anypoint CLI v4 | CLI commands for app management and API promotion |
 | Direct Telemetry Stream | Real-time monitoring with external observability tools |
 | Environment Promotion | Artifact-based promotion patterns (no rebuild) |
 | Secrets Management | Secure credential handling across environments |
