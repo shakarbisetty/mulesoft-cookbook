@@ -17,6 +17,8 @@
 | [MCP IDE Setup](mcp-ide-setup/) | Connect Cursor, VS Code, or Windsurf to Anypoint Platform via MCP | Beginner |
 | [A2A Protocol](a2a-protocol/) | Build agent-to-agent communication with Google's A2A protocol | Intermediate |
 | [Agent Fabric](agent-fabric/) | Register, discover, and govern agents across clouds | Advanced |
+| [Vibes / Dev Agent](vibes-dev-agent/) | Build integrations with natural language prompts in ACB | Beginner |
+| [MuleSoft for Flow](mulesoft-for-flow/) | Low-code integration inside Salesforce Flow Builder | Beginner |
 
 ---
 
@@ -48,6 +50,7 @@
 - [MCP Connector Docs](https://docs.mulesoft.com/mcp-connector/latest/)
 - [A2A Connector Docs](https://docs.mulesoft.com/a2a-connector/latest/)
 - [Agent Fabric Docs](https://docs.mulesoft.com/agent-fabric/)
+- [MuleSoft Vibes Docs](https://docs.mulesoft.com/anypoint-code-builder/int-ai-developing-integrations)
 - [MuleSoft MCP Server (npm)](https://www.npmjs.com/package/@mulesoft/mcp-server)
 - [A2A Protocol Spec](https://a2a-protocol.org/latest/specification/)
 
