@@ -1,29 +1,63 @@
 # DevOps & CI/CD
 
+[![MuleSoft](https://img.shields.io/badge/MuleSoft-DevOps-00A1E0.svg)](https://www.mulesoft.com/)
+[![GitHub Actions](https://img.shields.io/badge/CI%2FCD-GitHub_Actions-2088FF.svg)](https://github.com/features/actions)
+
 > Automate MuleSoft builds, tests, deployments, and monitoring.
 
-## Topics
+---
 
-| Topic | Description | Status |
-|-------|-------------|--------|
-| GitHub Actions Pipeline | Complete CI/CD for MuleSoft with GitHub Actions | Planned |
-| CloudHub 2.0 Deployment | Automated deployment to CloudHub 2.0 | Planned |
-| MUnit Automation | Run MUnit tests in CI pipelines | Planned |
-| Maven Configuration | Maven plugin setup that works first time | Planned |
-| Environment Promotion | dev to staging to prod pipeline | Planned |
-| Secrets Management | Secure credential handling for deployments | Planned |
-| Direct Telemetry Stream | Real-time monitoring setup | Planned |
+## What's Here
+
+| Tutorial | Description | Difficulty |
+|----------|-------------|------------|
+| [GitHub Actions Pipeline](github-actions-pipeline/) | Complete CI/CD: build, test, deploy across DEV → QA → PROD | Intermediate |
+| [MUnit in CI](munit-ci/) | Run MUnit tests, enforce coverage thresholds, generate reports | Beginner |
+| [Maven Setup](maven-setup/) | Mule Maven Plugin config — authentication, deployment, Exchange | Beginner |
+
+## Coming Soon
+
+| Topic | Description |
+|-------|-------------|
+| CloudHub 2.0 Deployment | Advanced deployment patterns, autoscaling, rolling updates |
+| Anypoint CLI v4 | CLI commands for app management and API promotion |
+| Direct Telemetry Stream | Real-time monitoring with external observability tools |
+| Environment Promotion | Artifact-based promotion patterns (no rebuild) |
+| Secrets Management | Secure credential handling across environments |
 
 ## Prerequisites
 
-- GitHub account (for Actions workflows)
+- GitHub account with Actions enabled
 - Anypoint Platform Connected App credentials
-- Maven 3.8+
+- Maven 3.8+ and Java 21
+- Mule Maven Plugin 4.6.0
+
+---
+
+## Quick Reference
+
+```bash
+# Build
+mvn clean package
+
+# Test with coverage
+mvn clean test
+
+# Deploy to CloudHub 2.0
+mvn clean deploy -DmuleDeploy -s .maven/settings.xml
+
+# Deploy with environment profile
+mvn clean deploy -DmuleDeploy -Pprod -s .maven/settings.xml
+```
+
+---
 
 ## Related
 
 - [MuleSoft CI/CD with GitHub Actions](https://blogs.mulesoft.com/dev-guides/automate-ci-cd-pipelines-with-github-actions-and-anypoint-cli/)
 - [CloudHub 2.0 Documentation](https://docs.mulesoft.com/cloudhub-2/)
+- [Mule Maven Plugin Reference](https://docs.mulesoft.com/mule-runtime/latest/mmp-concept)
+- [Anypoint CLI v4](https://docs.mulesoft.com/anypoint-cli/latest/)
 
 ---
 
