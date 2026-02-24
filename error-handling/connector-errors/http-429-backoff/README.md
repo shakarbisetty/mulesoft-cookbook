@@ -48,4 +48,4 @@
 
 ### Related
 - [Exponential Backoff](../../retry/exponential-backoff-jitter/) — general backoff strategy
-- [Rate Limit Sliding Window](../../performance/api-performance/rate-limit-sliding-window/) — applying your own rate limits
+- [Rate Limit Sliding Window](../../../performance/api-performance/rate-limit-sliding-window/) — applying your own rate limits

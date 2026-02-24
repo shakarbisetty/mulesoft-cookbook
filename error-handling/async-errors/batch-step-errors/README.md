@@ -62,4 +62,4 @@ output application/json
 
 ### Related
 - [Parallel For-Each Collection](../parallel-foreach-collection/) — non-batch parallel processing
-- [Max Failed Records](../../performance/batch/max-failed-records/) — performance implications
+- [Max Failed Records](../../../performance/batch/max-failed-records/) — performance implications

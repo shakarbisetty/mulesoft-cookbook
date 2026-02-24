@@ -50,4 +50,4 @@
 
 ### Related
 - [Rate Limiting LLM](../rate-limiting-llm/) — usage control
-- [Secrets Management](../../devops/secrets/) — general secrets patterns
+- [Secrets Management](../../../devops/secrets/) — general secrets patterns

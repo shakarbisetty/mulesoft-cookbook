@@ -51,4 +51,4 @@
 ### Related
 - [HTTP Timeout Fallback](../../connector-errors/http-timeout-fallback/) — timeout-specific fallback
 - [Circuit Breaker](../../retry/circuit-breaker-object-store/) — prevent calling failing service
-- [Cache Scope](../../performance/caching/cache-scope-object-store/) — proactive caching
+- [Cache Scope](../../../performance/caching/cache-scope-object-store/) — proactive caching

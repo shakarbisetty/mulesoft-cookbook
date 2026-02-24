@@ -33,4 +33,4 @@
 
 ### Related
 - [Slack Webhook Alert](../slack-webhook-alert/) — external notification
-- [Custom Business Metrics](../../performance/monitoring/custom-business-metrics/) — CH2 alternative
+- [Custom Business Metrics](../../../performance/monitoring/custom-business-metrics/) — CH2 alternative

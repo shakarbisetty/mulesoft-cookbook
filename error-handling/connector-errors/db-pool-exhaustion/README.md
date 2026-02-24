@@ -36,5 +36,5 @@
 - Monitor pool metrics via JMX to set proper thresholds
 
 ### Related
-- [DB HikariCP Pool](../../performance/connections/db-hikaricp-pool/) — pool configuration
+- [DB HikariCP Pool](../../../performance/connections/db-hikaricp-pool/) — pool configuration
 - [HTTP 429 Backoff](../http-429-backoff/) — similar retry-after pattern for HTTP

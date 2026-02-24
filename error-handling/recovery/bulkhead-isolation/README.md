@@ -48,6 +48,6 @@
 - Use separate HTTP listener configs with different ports for physical isolation
 
 ### Related
-- [Max Concurrency Flow](../../performance/threading/max-concurrency-flow/) — detailed concurrency tuning
-- [Async Back-Pressure](../../performance/threading/async-back-pressure/) — async concurrency limits
+- [Max Concurrency Flow](../../../performance/threading/max-concurrency-flow/) — detailed concurrency tuning
+- [Async Back-Pressure](../../../performance/threading/async-back-pressure/) — async concurrency limits
 - [Circuit Breaker](../../retry/circuit-breaker-object-store/) — per-service failure isolation

@@ -41,4 +41,4 @@
 
 ### Related
 - [Until Successful Basic](../../retry/until-successful-basic/) — retry fundamentals
-- [Upsert on Conflict](../../performance/database/upsert-on-conflict/) — avoid deadlocks with upserts
+- [Upsert on Conflict](../../../performance/database/upsert-on-conflict/) — avoid deadlocks with upserts

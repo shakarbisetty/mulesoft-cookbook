@@ -33,5 +33,5 @@ configuration:
 - Runtime validation catches drift but does not fix it — follow up with spec updates
 
 ### Related
-- [RAML/OAS Validation](../../error-handling/validation/raml-oas-validation/) — request validation
+- [RAML/OAS Validation](../../../error-handling/validation/raml-oas-validation/) — request validation
 - [Conformance Profile](../conformance-profile/) — design-time governance

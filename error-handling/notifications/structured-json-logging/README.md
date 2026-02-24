@@ -60,4 +60,4 @@
 
 ### Related
 - [CloudHub Notifications](../cloudhub-notifications/) — platform-native monitoring
-- [Distributed Tracing](../../performance/monitoring/distributed-tracing-bottlenecks/) — trace-level observability
+- [Distributed Tracing](../../../performance/monitoring/distributed-tracing-bottlenecks/) — trace-level observability

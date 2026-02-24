@@ -46,4 +46,4 @@
 
 ### Related
 - [Multi-Agent Orchestration](../multi-agent-orchestration/) — orchestration patterns
-- [Circuit Breaker](../../error-handling/retry/circuit-breaker-object-store/) — circuit breaker pattern
+- [Circuit Breaker](../../../error-handling/retry/circuit-breaker-object-store/) — circuit breaker pattern

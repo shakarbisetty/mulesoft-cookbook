@@ -37,4 +37,4 @@
 
 ### Related
 - [Load Balanced Server](../load-balanced-server/) — multi-replica tracing
-- [OTel Telemetry Export](../../api-management/analytics/otel-telemetry-export/) — OTLP export
+- [OTel Telemetry Export](../../../api-management/analytics/otel-telemetry-export/) — OTLP export

@@ -66,19 +66,19 @@ No install. No dependencies. Just working DataWeave.
 |---|----------|----------|-----------------|
 | 01 | [Array Manipulation](#01--array-manipulation) | 9 patterns | Beginner → Advanced |
 | 02 | [Object Transformation](#02--object-transformation) | 7 patterns | Beginner → Advanced |
-| 03 | [String Operations](#03--string-operations) | 5 patterns | Beginner → Intermediate |
+| 03 | [String Operations](#03--string-operations) | 6 patterns | Beginner → Intermediate |
 | 04 | [Type Coercion](#04--type-coercion) | 4 patterns | Beginner → Advanced |
-| 05 | [XML Handling](#05--xml-handling) | 6 patterns | Intermediate → Advanced |
+| 05 | [XML Handling](#05--xml-handling) | 7 patterns | Intermediate → Advanced |
 | 06 | [CSV Operations](#06--csv-operations) | 4 patterns | Beginner → Intermediate |
-| 07 | [Error Handling](#07--error-handling) | 5 patterns | Beginner → Intermediate |
+| 07 | [Error Handling](#07--error-handling) | 6 patterns | Beginner → Advanced |
 | 08 | [Date/Time](#08--datetime) | 4 patterns | Beginner → Intermediate |
-| 09 | [Advanced Patterns](#09--advanced-patterns) | 6 patterns | Advanced |
+| 09 | [Advanced Patterns](#09--advanced-patterns) | 9 patterns | Intermediate → Advanced |
 | 10 | [Real-World Mappings](#10--real-world-mappings) | 6 patterns | Intermediate → Advanced |
-| 11 | [Security & Encoding](#11--security--encoding) | 6 patterns | Intermediate → Advanced |
-| 12 | [API Response Patterns](#12--api-response-patterns) | 5 patterns | Intermediate → Advanced |
+| 11 | [Security & Encoding](#11--security--encoding) | 7 patterns | Intermediate → Advanced |
+| 12 | [API Response Patterns](#12--api-response-patterns) | 6 patterns | Intermediate → Advanced |
 | 13 | [Flat File / Fixed Width](#13--flat-file--fixed-width) | 4 patterns | Intermediate → Advanced |
 | 14 | [Lookup & Enrichment](#14--lookup--enrichment) | 4 patterns | Intermediate → Advanced |
-| 15 | [Performance Optimization](#15--performance-optimization) | 5 patterns | Advanced |
+| 15 | [Performance Optimization](#15--performance-optimization) | 6 patterns | Advanced |
 | 16 | [Event-Driven](#16--event-driven) | 2 patterns | Advanced |
 | 17 | [Math & Precision](#17--math--precision) | 1 pattern | Intermediate |
 | 18 | [Observability](#18--observability) | 1 pattern | Intermediate |
@@ -122,6 +122,7 @@ No install. No dependencies. Just working DataWeave.
 | Case Conversion | [`camel-to-snake.dwl`](patterns/03-string-operations/camel-to-snake.dwl) | Intermediate |
 | Template Strings | [`template-strings.dwl`](patterns/03-string-operations/template-strings.dwl) | Beginner |
 | String Padding | [`string-padding.dwl`](patterns/03-string-operations/string-padding.dwl) | Intermediate |
+| Advanced String Functions | [`string-advanced.dwl`](patterns/03-string-operations/string-advanced.dwl) | Beginner |
 
 ### 04 — Type Coercion
 
@@ -142,6 +143,7 @@ No install. No dependencies. Just working DataWeave.
 | CDATA Handling | [`cdata-handling.dwl`](patterns/05-xml-handling/cdata-handling.dwl) | Intermediate |
 | Attribute Extraction | [`attributes-extraction.dwl`](patterns/05-xml-handling/attributes-extraction.dwl) | Intermediate |
 | SOAP Envelope Builder | [`soap-envelope-builder.dwl`](patterns/05-xml-handling/soap-envelope-builder.dwl) | Advanced |
+| XML DTD Handling | [`dtd-xml-validation.dwl`](patterns/05-xml-handling/dtd-xml-validation.dwl) | Advanced |
 
 ### 06 — CSV Operations
 
@@ -161,6 +163,7 @@ No install. No dependencies. Just working DataWeave.
 | Error Response Builder | [`error-response-builder.dwl`](patterns/07-error-handling/error-response-builder.dwl) | Intermediate |
 | Conditional Error | [`conditional-error.dwl`](patterns/07-error-handling/conditional-error.dwl) | Intermediate |
 | Retry Backoff Config | [`retry-backoff-config.dwl`](patterns/07-error-handling/retry-backoff-config.dwl) | Advanced |
+| Batch Error Analysis | [`batch-error-handler.dwl`](patterns/07-error-handling/batch-error-handler.dwl) | Advanced |
 
 ### 08 — Date/Time
 
@@ -181,6 +184,9 @@ No install. No dependencies. Just working DataWeave.
 | Dynamic Schema | [`dynamic-schema.dwl`](patterns/09-advanced-patterns/dynamic-schema.dwl) | Advanced |
 | Tail Recursion | [`tail-recursion.dwl`](patterns/09-advanced-patterns/tail-recursion.dwl) | Advanced |
 | Pattern Matching | [`pattern-matching.dwl`](patterns/09-advanced-patterns/pattern-matching.dwl) | Advanced |
+| Type-Safe Generics | [`generics-type-safe.dwl`](patterns/09-advanced-patterns/generics-type-safe.dwl) | Advanced |
+| Metadata Annotations | [`metadata-annotation.dwl`](patterns/09-advanced-patterns/metadata-annotation.dwl) | Intermediate |
+| Type Introspection | [`type-introspection.dwl`](patterns/09-advanced-patterns/type-introspection.dwl) | Intermediate |
 
 ### 10 — Real-World Mappings
 
@@ -203,6 +209,7 @@ No install. No dependencies. Just working DataWeave.
 | Data Masking | [`data-masking.dwl`](patterns/11-security-encoding/data-masking.dwl) | Intermediate |
 | HMAC Signature | [`hmac-signature.dwl`](patterns/11-security-encoding/hmac-signature.dwl) | Advanced |
 | XML Signature Prep | [`xml-signature-prep.dwl`](patterns/11-security-encoding/xml-signature-prep.dwl) | Advanced |
+| AES Encrypt/Decrypt | [`crypto-encrypt-decrypt.dwl`](patterns/11-security-encoding/crypto-encrypt-decrypt.dwl) | Advanced |
 
 ### 12 — API Response Patterns
 
@@ -213,6 +220,7 @@ No install. No dependencies. Just working DataWeave.
 | HATEOAS Links | [`hateoas-links.dwl`](patterns/12-api-response-patterns/hateoas-links.dwl) | Advanced |
 | Bulk Response Builder | [`bulk-response-builder.dwl`](patterns/12-api-response-patterns/bulk-response-builder.dwl) | Advanced |
 | Response Filtering | [`response-filtering.dwl`](patterns/12-api-response-patterns/response-filtering.dwl) | Intermediate |
+| GraphQL Response Flattening | [`graphql-response-transform.dwl`](patterns/12-api-response-patterns/graphql-response-transform.dwl) | Intermediate |
 
 ### 13 — Flat File / Fixed Width
 
@@ -241,6 +249,7 @@ No install. No dependencies. Just working DataWeave.
 | Index-Based Lookup | [`index-based-lookup.dwl`](patterns/15-performance-optimization/index-based-lookup.dwl) | Intermediate |
 | Selective Transform | [`selective-transform.dwl`](patterns/15-performance-optimization/selective-transform.dwl) | Advanced |
 | Parallel-Safe Chunking | [`parallel-safe-chunking.dwl`](patterns/15-performance-optimization/parallel-safe-chunking.dwl) | Advanced |
+| Streaming Large Payloads | [`streaming-large-payload.dwl`](patterns/15-performance-optimization/streaming-large-payload.dwl) | Advanced |
 
 ### 16 — Event-Driven
 

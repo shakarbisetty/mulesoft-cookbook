@@ -44,4 +44,4 @@
 
 ### Related
 - [Salesforce Invalid Session](../salesforce-invalid-session/) — session recovery
-- [DB Cursor Streaming](../../performance/streaming/db-cursor-streaming/) — streaming large result sets
+- [DB Cursor Streaming](../../../performance/streaming/db-cursor-streaming/) — streaming large result sets
