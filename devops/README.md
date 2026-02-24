@@ -3,11 +3,11 @@
 [![MuleSoft](https://img.shields.io/badge/MuleSoft-DevOps-00A1E0.svg)](https://www.mulesoft.com/)
 [![GitHub Actions](https://img.shields.io/badge/CI%2FCD-GitHub_Actions-2088FF.svg)](https://github.com/features/actions)
 
-> Automate MuleSoft builds, tests, deployments, and monitoring.
+> 47 recipes for automating MuleSoft builds, tests, deployments, and monitoring.
 
 ---
 
-## What's Here
+## Tutorials (Start Here)
 
 | Tutorial | Description | Difficulty |
 |----------|-------------|------------|
@@ -17,19 +17,20 @@
 | [CloudHub 2.0 Deployment](cloudhub2-deployment/) | Architecture, networking, autoscaling, monitoring, migration | Intermediate |
 | [Monitoring & Telemetry](monitoring-telemetry/) | DTS, OpenTelemetry, Grafana/Splunk/Datadog/New Relic integration | Advanced |
 
-## Coming Soon
+## Recipe Categories
 
-| Topic | Description |
-|-------|-------------|
-| Environment Promotion | Artifact-based promotion patterns (no rebuild) |
-| Secrets Management | Secure credential handling across environments |
-
-## Prerequisites
-
-- GitHub account with Actions enabled
-- Anypoint Platform Connected App credentials
-- Maven 3.8+ and Java 21
-- Mule Maven Plugin 4.6.0
+| Category | Recipes | Description |
+|----------|---------|-------------|
+| [cicd-pipelines/](cicd-pipelines/) | 5 | GitLab CI, Azure DevOps, Jenkins, Bitbucket Pipelines, trunk-based dev |
+| [environments/](environments/) | 5 | No-rebuild promotion, property externalization, secure properties, feature flags |
+| [infrastructure/](infrastructure/) | 5 | Terraform, Ansible, Helm RTF, K8s Flex Gateway, CloudFormation |
+| [secrets/](secrets/) | 5 | HashiCorp Vault, AWS Secrets Manager, Azure Key Vault, credential rotation |
+| [testing/](testing/) | 4 | Docker integration, contract testing, Gatling performance, Newman E2E |
+| [deployment/](deployment/) | 5 | Blue-green, canary release, rolling update, rollback strategies, zero-downtime DB |
+| [rtf/](rtf/) | 4 | RTF on EKS, AKS, GKE, resource sizing |
+| [anypoint-cli/](anypoint-cli/) | 4 | CLI v4 recipes, API Manager automation, Exchange publishing, org management |
+| [observability/](observability/) | 4 | Distributed tracing OTEL, custom metrics Micrometer, log aggregation, SLO/SLI alerting |
+| [compliance/](compliance/) | 1 | Dependency vulnerability scanning |
 
 ---
 

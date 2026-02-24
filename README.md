@@ -3,23 +3,24 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![MuleSoft](https://img.shields.io/badge/MuleSoft-Anypoint-00A1E0.svg)](https://www.mulesoft.com/)
+[![Recipes](https://img.shields.io/badge/recipes-410%2B-orange.svg)](#whats-inside)
 [![GitHub Stars](https://img.shields.io/github/stars/shakarbisetty/mulesoft-cookbook?style=social)](https://github.com/shakarbisetty/mulesoft-cookbook)
 
-> Practical recipes for MuleSoft developers — DataWeave patterns, AI agent integration, CI/CD pipelines, migration guides, and more.
+> Practical recipes for MuleSoft developers — DataWeave patterns, error handling, performance tuning, AI agent integration, API management, CI/CD pipelines, and migration guides.
 
 ---
 
 ## What's Inside
 
-| Section | What You Get | Status |
-|---------|-------------|--------|
-| [**DataWeave**](dataweave/) | 100+ transformation patterns, 7 Exchange modules, cheatsheet, anti-patterns guide | 100 patterns |
-| [**AI Agents**](ai-agents/) | MCP server setup, A2A protocol, Agentforce actions, Inference Connector, RAG pipelines | Coming soon |
-| [**DevOps**](devops/) | GitHub Actions CI/CD, CloudHub 2.0 deployment, MUnit automation, monitoring | Coming soon |
-| [**Migrations**](migrations/) | Java 8 to 17, DW 1.0 to 2.0, MEL to DataWeave | Coming soon |
-| [**Error Handling**](error-handling/) | Circuit breaker, retry with backoff, dead letter queues, global error patterns | Coming soon |
-| [**Performance**](performance/) | Streaming large payloads, memory tuning, batch optimization, caching | Coming soon |
-| [**API Management**](api-management/) | Flex Gateway, custom policies, rate limiting, API governance | Coming soon |
+| Section | What You Get | Recipes |
+|---------|-------------|---------|
+| [**DataWeave**](dataweave/) | Transformation patterns, Exchange modules, cheatsheet, anti-patterns | 100 |
+| [**Error Handling**](error-handling/) | Global handlers, retry/circuit breaker, DLQ, transactions, notifications | 51 |
+| [**Performance**](performance/) | Streaming, memory tuning, batch optimization, caching, thread pools | 48 |
+| [**API Management**](api-management/) | Flex Gateway, custom policies, rate limiting, security, governance | 48 |
+| [**AI Agents**](ai-agents/) | MCP, A2A, RAG pipelines, Agentforce, inference, AI testing | 55 |
+| [**DevOps**](devops/) | CI/CD pipelines, IaC, secrets, deployment strategies, observability | 47 |
+| [**Migrations**](migrations/) | Java versions, runtime upgrades, CloudHub, connectors, architecture | 61 |
 
 ---
 
@@ -33,19 +34,20 @@
 %dw 2.0
 output application/json
 ---
-payload groupBy $.department
-    mapObject ((employees, dept) -> {
-        (dept): sizeOf(employees)
-    })
+payload filter $.status == "active"
+    map {
+        name: $.firstName ++ " " ++ $.lastName,
+        email: lower($.email)
+    }
 ```
 
-Browse all 100+ patterns: **[dataweave/](dataweave/)**
+Browse all 100 patterns: **[dataweave/](dataweave/)**
 
 ---
 
 ## Table of Contents
 
-### DataWeave Patterns (100+)
+### DataWeave Patterns (100)
 
 | Category | Patterns | Difficulty |
 |----------|----------|-----------|
@@ -79,46 +81,41 @@ Browse all 100+ patterns: **[dataweave/](dataweave/)**
 - [7 Exchange Modules](dataweave/#anypoint-exchange-modules) (96 functions, 213 MUnit tests)
 - [Playground Tips](dataweave/playground/)
 
-### AI Agent Integration (coming soon)
+### Error Handling (51 recipes)
 
-- MCP Server setup with Anypoint
-- A2A protocol for agent-to-agent communication
-- Agentforce actions via Topic Center
-- Inference Connector for LLM calls from Mule flows
-- RAG pipelines with Vectors Connector
+Global handlers, retry patterns, circuit breaker, dead letter queues, async errors, transactions, connector-specific errors, alerting, validation, and recovery patterns.
 
-### DevOps & CI/CD (coming soon)
+**[Browse all error handling recipes](error-handling/)**
 
-- GitHub Actions pipeline for MuleSoft
-- CloudHub 2.0 deployment automation
-- MUnit test automation in CI
-- Direct Telemetry Stream monitoring
+### Performance (48 recipes)
 
-### Migration Guides (coming soon)
+Streaming strategies, memory/heap tuning, batch optimization, connection pools, caching, threading model, API performance, database tuning, CloudHub sizing, and monitoring.
 
-- Java 8 to Java 17 migration
-- DataWeave 1.0 to 2.0 migration
-- MEL to DataWeave conversion
+**[Browse all performance recipes](performance/)**
 
-### Error Handling Patterns (coming soon)
+### API Management (48 recipes)
 
-- Circuit breaker implementation
-- Retry with exponential backoff
-- Dead letter queue patterns
-- Global error handler design
+Flex Gateway deployment, AI gateway, custom WASM policies, rate limiting, OAuth/JWT/mTLS security, API governance, API design patterns, versioning, and analytics.
 
-### Performance Optimization (coming soon)
+**[Browse all API management recipes](api-management/)**
 
-- Streaming strategies for large payloads
-- Memory management and heap tuning
-- Batch job performance patterns
+### AI Agent Integration (55 recipes)
 
-### API Management (coming soon)
+MCP server/client setup, A2A protocol, advanced MCP (OAuth, streaming, tracing), RAG pipelines, Agentforce actions, inference connector, AI testing, multi-cloud LLMs, and AI security.
 
-- Flex Gateway as LLM Gateway
-- Custom policy development
-- Rate limiting strategies
-- API governance automation
+**[Browse all AI agent recipes](ai-agents/)**
+
+### DevOps & CI/CD (47 recipes)
+
+CI/CD pipelines (GitHub Actions, GitLab, Jenkins), environment promotion, IaC (Terraform, Helm), secrets management, deployment strategies (blue-green, canary), RTF, observability, and compliance.
+
+**[Browse all DevOps recipes](devops/)**
+
+### Migrations (61 recipes)
+
+Java version upgrades, Mule runtime migrations, CloudHub 1→2, API spec conversions, connector upgrades, security migrations, monitoring migrations, build tool upgrades, and architectural modernization.
+
+**[Browse all migration recipes](migrations/)**
 
 ---
 

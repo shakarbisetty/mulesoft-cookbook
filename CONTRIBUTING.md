@@ -1,10 +1,10 @@
-# Contributing to DataWeave Patterns
+# Contributing to MuleSoft Cookbook
 
-Thank you for your interest in contributing! This guide explains how to add new patterns and submit pull requests.
+Thank you for your interest in contributing! This guide explains how to add new patterns and recipes.
 
 ---
 
-## Adding a New Pattern
+## Adding a DataWeave Pattern
 
 ### 1. Follow the DWL Template
 
@@ -48,34 +48,90 @@ output application/json
 ### 3. File Naming
 
 - Use **kebab-case** for all filenames: `filter-by-condition.dwl`, `group-by-field.dwl`
-- Place the file in the correct category folder under `patterns/`
+- Place the file in the correct category folder under `dataweave/patterns/`
 - Update the category's `README.md` to include the new pattern
+
+---
+
+## Adding a Mule Recipe
+
+### 1. Follow the Recipe Template
+
+Each recipe is a folder with a `README.md`:
+
+```markdown
+## Recipe Name
+> One-line description of what this recipe does.
+
+### When to Use
+- Bullet points of use cases
+
+### Configuration / Code
+
+\```xml
+<!-- Realistic Mule 4 XML config -->
+<flow name="example-flow">
+    <http:listener config-ref="HTTP_Listener" path="/api/example"/>
+    <!-- Your pattern here -->
+</flow>
+\```
+
+### How It Works
+1. Step-by-step explanation
+2. What each component does
+3. How data flows through
+
+### Gotchas
+- Common mistakes and edge cases
+- Performance considerations
+- Platform-specific notes (CloudHub vs on-prem)
+
+### Related
+- [Related Recipe](../related-recipe/) — brief description
+```
+
+### 2. Requirements for Every Recipe
+
+- **Realistic code** — production-grade Mule 4 XML, not toy examples
+- **Complete XML** — include required attributes (`config-ref`, `path`, etc.)
+- **When to Use** — at least 2 clear use cases
+- **Gotchas** — at least 2 practical warnings
+- **Related** — cross-link to 2+ related recipes in the cookbook
+- **Folder naming** — use **kebab-case**: `circuit-breaker-object-store/`
+
+### 3. File Placement
+
+Place recipes in the correct section and category:
+
+```
+error-handling/retry/my-new-recipe/README.md
+performance/caching/my-new-recipe/README.md
+api-management/security/my-new-recipe/README.md
+```
 
 ---
 
 ## Pull Request Requirements
 
-1. **One pattern per PR** (or a small batch of related patterns)
-2. Every `.dwl` file must include:
-   - Complete header comment with Input and Output examples
-   - Working, tested DW 2.0 code
-   - Alternative syntax where applicable
-3. **Update the category README** (`patterns/XX-category/README.md`) to list the new pattern
-4. **Update the root README** (`README.md`) table of contents if adding to a new category
-5. **Test your code** — paste it into the [DataWeave Playground](https://developer.mulesoft.com/learn/dataweave/) and verify the output matches
+1. **One pattern/recipe per PR** (or a small batch of related ones)
+2. Every file must include working, production-grade code
+3. **Update the section README** to list the new pattern/recipe
+4. **Update the root README** if adding to a new section
+5. **Test your code** — verify it works in Anypoint Studio or the DataWeave Playground
 
 ---
 
 ## Code Style
 
 - **DW 2.0 only** — no DW 1.0 syntax (except in the migration guide)
-- **kebab-case filenames** — `my-pattern-name.dwl`
+- **Mule 4 only** — no Mule 3 XML
+- **kebab-case filenames** — `my-pattern-name.dwl`, `my-recipe-name/`
 - **Consistent indentation** — 4 spaces (no tabs)
-- **MIME types** — always specify input and output MIME types in comments and code
+- **MIME types** — always specify input and output MIME types
 - **Comments** — use `//` for inline comments, `/** */` for header blocks
 
 ---
 
 ## Questions?
 
-Open an [issue](https://github.com/weavepilot/dataweave-patterns/issues) and we'll help you get started.
+Open an [issue](https://github.com/shakarbisetty/mulesoft-cookbook/issues) and we'll help you get started.

@@ -4,11 +4,11 @@
 [![MCP](https://img.shields.io/badge/Protocol-MCP-purple.svg)](https://modelcontextprotocol.io/)
 [![A2A](https://img.shields.io/badge/Protocol-A2A-green.svg)](https://a2a-protocol.org/)
 
-> Build, connect, and govern AI agents with MuleSoft — MCP servers, A2A protocol, Agent Fabric, and more.
+> 55 recipes for building, connecting, and governing AI agents with MuleSoft — MCP servers, A2A protocol, RAG pipelines, Agentforce, and more.
 
 ---
 
-## What's Here
+## Tutorials (Start Here)
 
 | Tutorial | Description | Difficulty |
 |----------|-------------|------------|
@@ -19,6 +19,21 @@
 | [Agent Fabric](agent-fabric/) | Register, discover, and govern agents across clouds | Advanced |
 | [Vibes / Dev Agent](vibes-dev-agent/) | Build integrations with natural language prompts in ACB | Beginner |
 | [MuleSoft for Flow](mulesoft-for-flow/) | Low-code integration inside Salesforce Flow Builder | Beginner |
+
+## Recipe Categories
+
+| Category | Recipes | Description |
+|----------|---------|-------------|
+| [mcp-advanced/](mcp-advanced/) | 6 | OAuth security, resource subscriptions, streaming, tool discovery, load balancing, tracing |
+| [a2a-advanced/](a2a-advanced/) | 6 | Multi-agent orchestration, streaming artifacts, push notifications, agent cards, error recovery |
+| [inference/](inference/) | 5 | Chat completions, prompt templates, embeddings, image generation, content moderation |
+| [rag/](rag/) | 5 | Vector DB setup, document chunking, similarity search, Salesforce Knowledge, Exchange docs |
+| [agentforce/](agentforce/) | 5 | Topics, Mule actions, custom instructions, multi-turn conversations, agent testing |
+| [ai-gateway/](ai-gateway/) | 5 | Flex AI proxy, PII masking, prompt injection detection, token tracking, model fallback |
+| [practical-recipes/](practical-recipes/) | 5 | Email classifier, order chatbot, document summarizer, data enrichment, sentiment analysis |
+| [ai-testing/](ai-testing/) | 4 | MUnit mock LLM, response quality metrics, tracing agent calls, A/B testing prompts |
+| [multi-cloud/](multi-cloud/) | 4 | OpenAI, Anthropic, Azure OpenAI, Einstein Trust Layer |
+| [ai-security/](ai-security/) | 3 | Rate limiting LLM, credential vault, data classification |
 
 ---
 

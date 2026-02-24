@@ -1,23 +1,25 @@
 # Performance Optimization
 
-> Techniques for handling large payloads, tuning memory, and maximizing throughput.
+> 48 recipes for handling large payloads, tuning memory, and maximizing throughput in MuleSoft.
 
-## Topics
+## Categories
 
-| Topic | Description | Status |
-|-------|-------------|--------|
-| Streaming Strategies | Choose the right streaming strategy per use case | Planned |
-| Memory Management | Heap tuning and GC optimization for Mule apps | Planned |
-| Batch Performance | Optimize batch job throughput and error handling | Planned |
-| Connection Pools | Pool sizing and configuration best practices | Planned |
-| Caching Strategies | Object Store, HTTP caching, DataWeave memoization | Planned |
-| Load Testing | MUnit performance tests and external load tools | Planned |
+| Category | Recipes | Description |
+|----------|---------|-------------|
+| [streaming/](streaming/) | 5 | Repeatable file store, non-repeatable, in-memory sizing, DB cursors |
+| [memory/](memory/) | 5 | Heap sizing, G1GC tuning, leak detection, large payload OOM, metaspace |
+| [batch/](batch/) | 5 | Block size, aggregator sizing, max failed records, watermarks, concurrency |
+| [connections/](connections/) | 5 | HTTP pools, HikariCP, SFTP pools, timeouts, JMX monitoring |
+| [caching/](caching/) | 5 | Cache scope + Object Store, HTTP caching, distributed cache, invalidation |
+| [threading/](threading/) | 5 | UBER pool sizing, CPU light vs intensive, maxConcurrency, async back-pressure |
+| [api-performance/](api-performance/) | 5 | Rate limiting, SLA throttling, gzip, cursor pagination, content negotiation |
+| [database/](database/) | 5 | Bulk insert, upsert, pool sizing by vendor, query timeout, parameterized queries |
+| [cloudhub/](cloudhub/) | 5 | vCore sizing, horizontal scaling, MQ throughput, CH2 HPA, worker restart |
+| [monitoring/](monitoring/) | 3 | Custom business metrics, distributed tracing, flow throughput measurement |
 
 ## Related
 
 - [DataWeave Performance patterns](../dataweave/patterns/15-performance-optimization/) — Lazy evaluation, streaming reduce, parallel chunking
-- [DataWeave Streaming Large Payload](../dataweave/patterns/15-performance-optimization/streaming-large-payload.dwl)
-- [DataWeave Execution Timer](../dataweave/patterns/20-utility-modules/execution-timer.dwl)
 
 ---
 
