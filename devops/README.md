@@ -15,12 +15,12 @@
 | [MUnit in CI](munit-ci/) | Run MUnit tests, enforce coverage thresholds, generate reports | Beginner |
 | [Maven Setup](maven-setup/) | Mule Maven Plugin config — authentication, deployment, Exchange | Beginner |
 | [CloudHub 2.0 Deployment](cloudhub2-deployment/) | Architecture, networking, autoscaling, monitoring, migration | Intermediate |
+| [Monitoring & Telemetry](monitoring-telemetry/) | DTS, OpenTelemetry, Grafana/Splunk/Datadog/New Relic integration | Advanced |
 
 ## Coming Soon
 
 | Topic | Description |
 |-------|-------------|
-| Direct Telemetry Stream | Real-time monitoring with external observability tools |
 | Environment Promotion | Artifact-based promotion patterns (no rebuild) |
 | Secrets Management | Secure credential handling across environments |
 
