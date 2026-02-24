@@ -197,6 +197,42 @@ See [MCP IDE Setup](../mcp-ide-setup/) for connecting external IDEs to these too
 - **No autonomous production deploy** — Act mode requires human confirmation for deployment
 - **Included at no extra cost** — but requires an Einstein-enabled Salesforce org
 
+## When NOT to Use Vibes
+
+Vibes is powerful but has clear limitations. Knowing when to write code manually saves hours of debugging AI-generated output.
+
+### Don't Use Vibes For:
+
+| Scenario | Why | Better Approach |
+|----------|-----|-----------------|
+| **Complex batch jobs** | Vibes generates simple batch configs but misses block sizing, memory tuning, watermarking, aggregator patterns | Write batch XML manually using [block-size-optimization](../../performance/batch/block-size-optimization/) |
+| **Custom error handling hierarchies** | Vibes adds basic try/on-error but doesn't understand layered error strategies, error type hierarchies, or cross-flow error propagation | Design error strategy first, then implement — see [error-handling](../../error-handling/) |
+| **Performance-critical DataWeave** | Vibes uses readable but non-optimized DW — nested maps, unnecessary intermediate variables, no streaming consideration | Hand-write DW with streaming and lazy evaluation — see [dataweave patterns](../../dataweave/) |
+| **Multi-flow orchestration** | Vibes generates individual flows well but doesn't understand flow-to-flow contracts, variable scoping across flow-refs, or async completion patterns | Design the orchestration architecture first, generate individual flows |
+| **SAP/EDI/AS2 integrations** | Vibes has limited training data for complex B2B connectors — generates incomplete configs | Use [connector patterns](../../connectors/) as starting templates |
+| **Security-critical flows** | Vibes doesn't understand OWASP risks, may generate injectable SQL, may skip input validation | Manual security review mandatory — see [OWASP mapping](../../api-management/security/owasp-api-top10-mapping/) |
+| **Migration from Mule 3** | Vibes generates Mule 4 from scratch but can't read/convert existing Mule 3 XML | Use MMA first, then Vibes for individual flow improvements |
+
+### Vibes Output Quality by Task Type
+
+| Task | Syntactic Validity | Semantic Correctness | Recommended? |
+|------|-------------------|---------------------|--------------|
+| Simple REST API (CRUD) | ~95% | ~90% | Yes |
+| DataWeave transforms | ~90% | ~80% | Yes, with review |
+| MUnit test generation | ~85% | ~70% | Yes, but fix mocks |
+| API spec (RAML/OAS) | ~90% | ~85% | Yes |
+| Batch processing | ~75% | ~50% | Start manually |
+| Complex error handling | ~80% | ~45% | Manual preferred |
+| Multi-connector orchestration | ~70% | ~40% | Manual preferred |
+
+### Workarounds for Vibes Limitations
+
+1. **Break complex prompts into steps** — generate one flow at a time, not an entire project
+2. **Provide input/output examples** — Vibes generates better DW when it sees sample data
+3. **Use workspace rules** — encode your standards so Vibes follows them automatically
+4. **Always review error handling** — add try blocks and error types Vibes misses
+5. **Run MUnit immediately** — catch semantic errors before they reach staging
+
 ## References
 
 - [MuleSoft Vibes GA Announcement](https://blogs.mulesoft.com/news/mulesoft-vibes-ga/)

@@ -152,6 +152,79 @@ anypoint-cli-v4 cloudhub app describe-v2 \
 - CH2 apps have different URL patterns — update API Manager and client configurations
 - Rolling updates require at least 2 replicas; single-replica deployment causes downtime
 
+### CH2 Migration Gotchas — What Nobody Tells You
+
+These are the real-world issues that catch teams during production cutover:
+
+#### 1. Firewall CIDR Changes
+CH2 uses different IP ranges than CH1. If your downstream systems or databases whitelist CH1 IPs, they will reject CH2 traffic.
+
+```
+# CH1 IP ranges (example — varies by region):
+# us-east-1: 3.33.130.0/24, 3.33.131.0/24
+
+# CH2 IP ranges are DIFFERENT and tied to your Private Space:
+# Check Runtime Manager → Private Space → Networking → NAT Gateway IPs
+
+# Action: Get CH2 NAT Gateway IPs BEFORE cutover and whitelist them
+# on ALL downstream firewalls, databases, SaaS allowlists
+```
+
+**Pre-migration script to identify all outbound destinations:**
+```bash
+# Find every host your app connects to (from logs)
+anypoint-cli-v4 cloudhub app download-logs \
+    --name "my-api" --environment "Production"
+grep -oE 'https?://[a-zA-Z0-9.-]+' mule-app.log | sort -u
+```
+
+#### 2. TCP Connection Loss During DNS Cutover
+Long-lived connections (WebSocket, database pools, JMS) break during DNS switch. Plan for:
+
+```
+# Step 1: Lower DNS TTL to 60s at least 24h before cutover
+# Step 2: Deploy to CH2 with new endpoint (parallel run)
+# Step 3: Warm up connection pools by sending test traffic
+# Step 4: Switch DNS CNAME
+# Step 5: Wait 2× TTL for propagation
+# Step 6: Monitor for connection errors (pool re-establishment)
+# Step 7: Decommission CH1 after 48h observation
+```
+
+#### 3. Hazelcast / Distributed Caching
+CH1 workers in the same app share a Hazelcast cluster. CH2 replicas do NOT automatically cluster.
+
+- **Object Store v2** works across replicas (backed by Anypoint service)
+- **Cache Scope** with in-memory caching is per-replica — not shared
+- **VM queues** are per-replica — use Anypoint MQ for cross-replica messaging
+
+```xml
+<!-- Replace in-memory cache with Object Store-backed cache -->
+<os:object-store name="distributed-cache"
+    persistent="true"
+    entryTtl="300"
+    entryTtlUnit="SECONDS"
+    maxEntries="1000" />
+```
+
+#### 4. DNS Cutover Checklist
+
+| Step | Action | Timing |
+|------|--------|--------|
+| T-24h | Lower DNS TTL to 60s | Day before |
+| T-4h | Deploy to CH2, run smoke tests | Pre-cutover |
+| T-2h | Warm up caches, connection pools | Pre-cutover |
+| T-0 | Switch DNS CNAME to CH2 endpoint | Cutover |
+| T+5min | Verify traffic flowing to CH2 | Post-cutover |
+| T+1h | Check error rates, latency metrics | Post-cutover |
+| T+48h | Decommission CH1 app | Cleanup |
+
+#### 5. Monitoring Gaps
+CH1 dashboard metrics do NOT transfer to CH2. You start with a blank monitoring baseline.
+- Export CH1 metrics/alerts before migration as your target SLOs
+- Set up CH2 alerts immediately (CPU > 80%, memory > 85%, 5xx rate > 1%)
+- Consider external monitoring (Datadog, New Relic) that survives the migration
+
 ### Related
 - [vpc-to-private-space](../vpc-to-private-space/) — Network migration
 - [persistent-queues-to-mq](../persistent-queues-to-mq/) — Queue migration
