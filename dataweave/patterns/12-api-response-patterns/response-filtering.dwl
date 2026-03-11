@@ -40,6 +40,6 @@ fun isRequested(field: String): Boolean =
     isEmpty(requestedFields) or (requestedFields contains field) or (requestedFields some (f) -> f startsWith "$(field).")
 ---
 if (isEmpty(requestedFields[0])) payload
-else payload filterObject (v, k) -> isRequested(k as String)
+else (payload filterObject (v, k) -> isRequested(k as String))
     mapObject (v, k) -> if (v is Object) { (k): v filterObject (sv, sk) -> requestedFields contains "$(k).$(sk)" }
     else { (k): v }
