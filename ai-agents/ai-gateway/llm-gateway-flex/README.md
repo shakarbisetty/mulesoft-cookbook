@@ -1,3 +1,9 @@
+<!-- type: guide -->
+<!-- added: 2026-04 -->
+<!-- mulesoft-version: 4.x -->
+<!-- status: ga -->
+<!-- version: 1.0 -->
+
 ## LLM Gateway with Flex Gateway
 > Use Flex Gateway as an enterprise LLM gateway for AI governance: rate limiting, PII detection, audit logging, and multi-provider routing
 

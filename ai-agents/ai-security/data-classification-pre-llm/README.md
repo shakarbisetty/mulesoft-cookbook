@@ -1,3 +1,9 @@
+<!-- type: recipe -->
+<!-- added: 2026-04 -->
+<!-- mulesoft-version: 4.x -->
+<!-- status: ga -->
+<!-- version: 1.0 -->
+
 ## Data Classification Before LLM Processing
 > Classify data sensitivity levels before deciding what can be sent to external LLMs.
 
