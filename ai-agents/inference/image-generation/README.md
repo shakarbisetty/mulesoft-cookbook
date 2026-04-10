@@ -1,3 +1,9 @@
+<!-- type: recipe -->
+<!-- added: 2026-04 -->
+<!-- mulesoft-version: 4.x -->
+<!-- status: ga -->
+<!-- version: 1.0 -->
+
 ## Image Generation via AI APIs
 > Generate images from text prompts using DALL-E or Stable Diffusion APIs.
 

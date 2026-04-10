@@ -1,3 +1,9 @@
+<!-- type: recipe -->
+<!-- added: 2026-04 -->
+<!-- mulesoft-version: 4.x -->
+<!-- status: ga -->
+<!-- version: 1.0 -->
+
 ## Distributed Tracing for MCP Calls
 > Trace AI agent tool calls end-to-end across MCP server, backends, and databases.
 

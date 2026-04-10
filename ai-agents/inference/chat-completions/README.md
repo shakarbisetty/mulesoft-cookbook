@@ -1,3 +1,9 @@
+<!-- type: recipe -->
+<!-- added: 2026-04 -->
+<!-- mulesoft-version: 4.x -->
+<!-- status: ga -->
+<!-- version: 1.0 -->
+
 ## Chat Completions with MuleSoft AI Connector
 > Call LLM chat completion APIs using the MuleSoft AI/ML Connector.
 

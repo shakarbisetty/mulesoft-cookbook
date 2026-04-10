@@ -1,3 +1,9 @@
+<!-- type: recipe -->
+<!-- added: 2026-04 -->
+<!-- mulesoft-version: 4.x -->
+<!-- status: ga -->
+<!-- version: 1.0 -->
+
 ## MUnit Mock for LLM Responses
 > Mock AI connector responses in MUnit tests for deterministic testing.
 
