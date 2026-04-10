@@ -1,3 +1,9 @@
+<!-- type: guide -->
+<!-- added: 2026-04 -->
+<!-- mulesoft-version: 4.x -->
+<!-- status: ga -->
+<!-- version: 1.0 -->
+
 # A2A Protocol — Agent-to-Agent Communication
 
 > Build agent-to-agent workflows with Google's A2A protocol and MuleSoft.
