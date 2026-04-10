@@ -1,3 +1,9 @@
+<!-- type: recipe -->
+<!-- added: 2026-04 -->
+<!-- mulesoft-version: 4.x -->
+<!-- status: ga -->
+<!-- version: 1.0 -->
+
 ## Exchange API Documentation RAG
 > Index Anypoint Exchange API documentation for AI-powered developer assistance.
 

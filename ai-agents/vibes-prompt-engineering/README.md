@@ -1,3 +1,9 @@
+<!-- type: guide -->
+<!-- added: 2026-04 -->
+<!-- mulesoft-version: 4.x -->
+<!-- status: ga -->
+<!-- version: 1.0 -->
+
 ## Vibes Prompt Engineering
 > Write effective prompts for MuleSoft Vibes flow generation with proven patterns and templates.
 
