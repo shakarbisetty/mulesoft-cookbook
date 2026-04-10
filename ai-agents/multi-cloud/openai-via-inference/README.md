@@ -1,3 +1,9 @@
+<!-- type: recipe -->
+<!-- added: 2026-04 -->
+<!-- mulesoft-version: 4.x -->
+<!-- status: ga -->
+<!-- version: 1.0 -->
+
 ## OpenAI via MuleSoft Inference Connector
 > Call OpenAI models using the MuleSoft AI/ML Inference Connector.
 

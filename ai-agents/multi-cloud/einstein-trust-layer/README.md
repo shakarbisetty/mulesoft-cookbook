@@ -1,3 +1,9 @@
+<!-- type: recipe -->
+<!-- added: 2026-04 -->
+<!-- mulesoft-version: 4.x -->
+<!-- status: ga -->
+<!-- version: 1.0 -->
+
 ## Einstein Trust Layer Integration
 > Use Salesforce Einstein Trust Layer for secure, governed AI within the Salesforce ecosystem.
 
