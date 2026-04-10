@@ -1,3 +1,9 @@
+<!-- type: guide -->
+<!-- added: 2026-04 -->
+<!-- mulesoft-version: 4.x -->
+<!-- status: ga -->
+<!-- version: 1.0 -->
+
 # MCP Server Basics
 
 > Turn any Mule application into an MCP server that AI agents can discover and invoke.

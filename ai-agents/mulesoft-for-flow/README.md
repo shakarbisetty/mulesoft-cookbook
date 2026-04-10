@@ -1,3 +1,9 @@
+<!-- type: guide -->
+<!-- added: 2026-04 -->
+<!-- mulesoft-version: 4.x -->
+<!-- status: ga -->
+<!-- version: 1.0 -->
+
 # MuleSoft for Flow — Low-Code Integration in Salesforce
 
 > Connect external systems to Salesforce automations — no Mule project required.

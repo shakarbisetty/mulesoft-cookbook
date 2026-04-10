@@ -1,3 +1,9 @@
+<!-- type: reference -->
+<!-- added: 2026-04 -->
+<!-- mulesoft-version: 4.x -->
+<!-- status: ga -->
+<!-- version: 1.0 -->
+
 ## MCP Servers by URL
 > Register MCP servers with just a URL — simplified discovery and tool integration (GA January 2026).
 

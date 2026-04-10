@@ -1,3 +1,9 @@
+<!-- type: guide -->
+<!-- added: 2026-04 -->
+<!-- mulesoft-version: 4.x -->
+<!-- status: ga -->
+<!-- version: 1.0 -->
+
 # MCP Client
 
 > Call remote MCP servers from your Mule flows — access external AI tools and services.
