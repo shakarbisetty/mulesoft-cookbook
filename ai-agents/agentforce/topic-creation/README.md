@@ -1,3 +1,9 @@
+<!-- type: recipe -->
+<!-- added: 2026-04 -->
+<!-- mulesoft-version: 4.x -->
+<!-- status: ga -->
+<!-- version: 1.0 -->
+
 ## Agentforce Topic Creation
 > Define conversation topics that guide Agentforce agents to the right actions.
 

@@ -1,3 +1,9 @@
+<!-- type: recipe -->
+<!-- added: 2026-04 -->
+<!-- mulesoft-version: 4.x -->
+<!-- status: ga -->
+<!-- version: 1.0 -->
+
 ## Multi-Agent Orchestration via A2A
 > Coordinate multiple AI agents using the Agent-to-Agent protocol for complex workflows.
 

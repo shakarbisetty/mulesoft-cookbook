@@ -1,3 +1,9 @@
+<!-- type: recipe -->
+<!-- added: 2026-04 -->
+<!-- mulesoft-version: 4.x -->
+<!-- status: ga -->
+<!-- version: 1.0 -->
+
 ## A2A Error Recovery
 > Handle agent failures with retry logic, fallback agents, and graceful degradation.
 

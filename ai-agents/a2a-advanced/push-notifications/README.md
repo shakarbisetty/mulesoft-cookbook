@@ -1,3 +1,9 @@
+<!-- type: recipe -->
+<!-- added: 2026-04 -->
+<!-- mulesoft-version: 4.x -->
+<!-- status: ga -->
+<!-- version: 1.0 -->
+
 ## A2A Push Notifications
 > Receive asynchronous task completion notifications from remote agents.
 

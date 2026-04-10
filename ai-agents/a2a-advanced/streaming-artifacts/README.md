@@ -1,3 +1,9 @@
+<!-- type: recipe -->
+<!-- added: 2026-04 -->
+<!-- mulesoft-version: 4.x -->
+<!-- status: ga -->
+<!-- version: 1.0 -->
+
 ## A2A Streaming Artifacts
 > Stream large artifacts (documents, datasets) between agents using A2A protocol.
 
