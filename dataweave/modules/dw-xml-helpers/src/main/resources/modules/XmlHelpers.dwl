@@ -110,7 +110,7 @@ fun flatToXml(obj: Object, sep: String): Object =
         reduce ((item, acc = {}) -> do {
             var parts = item.key splitBy sep
             ---
-            acc mergeNested(parts, item.val)
+            mergeNested(acc, parts, item.val)
         })
 
 /**
