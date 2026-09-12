@@ -1,5 +1,6 @@
 %dw 2.0
 import dw::Crypto
+import some from dw::core::Arrays
 
 /**
  * ApiUtils — API response helper functions for DataWeave 2.x
@@ -22,7 +23,7 @@ fun paginate(arr: Array, page: Number, size: Number): Object = do {
     var totalRecords = sizeOf(arr)
     var totalPages = ceil(totalRecords / safeSize)
     var startIdx = (page - 1) * safeSize
-    var endIdx = min([startIdx + safeSize - 1, totalRecords - 1])
+    var endIdx = min([startIdx + safeSize - 1, totalRecords - 1]) as Number
     ---
     {
         data: if (startIdx >= totalRecords) [] else arr[startIdx to endIdx],
@@ -56,7 +57,7 @@ fun buildLinks(basePath: String, page: Number, totalPages: Number, pageSize: Num
 fun filterFields(obj: Object, fields: Array<String>): Object =
     if (isEmpty(fields)) obj
     else obj filterObject (value, key) ->
-        fields some (f) -> f == (key as String) or f startsWith "$(key as String)."
+        fields some (f) -> (f == (key as String)) or (f startsWith "$(key as String).")
 
 /**
  * Sort an array of objects by a field name with direction.
@@ -123,8 +124,8 @@ fun buildBulkResult(results: Array<Object>): Object = do {
  * { name: "John", age: 30 } → "name=John&age=30"
  */
 fun toQueryString(params: Object): String =
-    params pluck (value, key) ->
-        "$(key as String)=$(value as String)"
+    (params pluck (value, key) ->
+        "$(key as String)=$(value as String)")
     joinBy "&"
 
 /**
